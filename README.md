@@ -24,6 +24,18 @@
 - ORM : Prisma
 - Code Convention : MVC 패턴
 
+### 브랜치 전략: GitHub Flow
+1. **main 브랜치**
+   - 항상 배포 가능한 상태 유지.
+   - 직접 커밋 금지. PR을 통해서만 병합.
+2. **feature 브랜치**
+   - 기능/작업별로 브랜치를 생성. (예: `feature/이슈-번호-기능명`)
+   - 브랜치 이름 규칙:
+     ```
+     feature/<기능명>
+     fix/<이슈-번호-버그수정>
+     hotfix/<긴급수정>
+     
 ## 환경 변수
 다음의 환경 변수를 `.env` 파일에 설정해야 합니다.
 - `DATABASE_URL`: AWS RDS 데이터베이스 연결 문자열
