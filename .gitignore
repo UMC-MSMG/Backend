@@ -2,3 +2,5 @@ node_modules/
 *.http
 test.http
 dist/
+.env
+prisma/migrations

@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum ActiveFlag {
+  ACTIVE
+  INACTIVE
+}
+
+enum NotificationType {
+  MEDICATION
+  EXERCISE
+}
+
+enum WorkoutName {
+  CARDIO
+  STRENGTH
+  FLEXIBILITY
+  BALANCE
+}
+
+enum MissionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum FileType {
+  IMAGE
+  VIDEO
+}
+
+// Models
+model User {
+  id                    BigInt  @id @default(autoincrement())
+  name                  String  @db.VarChar(255)
+  phoneNumber           String  @map("phone_number") @db.VarChar(15)
+  birthDate             DateTime @map("birth_date")
+  height                Float?
+  weight                Float?
+  workoutFrequency      Int     @map("workout_frequency")
+  consentPrivacyPolicy  Boolean @map("consent_privacy_policy") @default(false)
+  consentTermsService   Boolean @map("consent_terms_service") @default(false)
+  consentDate           DateTime @map("consent_date")
+  emergencyContactPhone String? @map("emergency_contact_phone") @db.VarChar(255)
+  deviceToken           String? @map("device_token")
+  points                Int     @default(0)
+  image                 String? @db.Text
+  createdAt             DateTime @map("created_at") @default(now())
+  updatedAt             DateTime @map("updated_at") @updatedAt
+  deletedAt             DateTime? @map("deleted_at")
+
+  Medication            Medication[]
+  WorkoutRecord         WorkoutRecord[]
+  Notification          Notification[]
+  StepCount             StepCount[]
+  PastWorkout           PastWorkout[]
+  MissionHistory        MissionHistory[]
+  MediaFile             MediaFile[]
+  Purchase              Purchase[]
+  UserPastWorkout       UserPastWorkout[]
+  @@map("user")
+}
+
+model Medication {
+  id              BigInt  @id @default(autoincrement())
+  userId          BigInt  @map("user_id")
+  medName         String  @map("med_name") @db.VarChar(255)
+  description     String? @db.Text
+  activeFlag      ActiveFlag  @map("active_flag")
+  createdAt       DateTime @map("created_at") @default(now())
+  updatedAt       DateTime @map("updated_at") @updatedAt
+  deletedAt       DateTime? @map("deleted_at")
+  medicationCycle Int     @map("medication_cycle")
+
+  User            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  MedicationTime  MedicationTime[]
+  @@map("medication")
+}
+
+model WorkoutRecord {
+  id             BigInt  @id @default(autoincrement())
+  scheduledDate  DateTime @map("scheduled_date")
+  completeDate   DateTime? @map("complete_date")
+  isComplete     Boolean  @map("is_complete")
+  userId         BigInt   @map("user_id")
+  workoutId      BigInt   @map("workout_id")
+
+  User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Workout        Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@map("workout_record")
+}
+
+model Notification {
+  id              BigInt  @id @default(autoincrement())
+  notificationType NotificationType  @map("notification_type")
+  title           String  @db.Text
+  message         String  @db.Text
+  scheduledTime   DateTime? @map("scheduled_time")
+  isSent          Boolean  @map("is_sent") @default(false)
+  isRead          Boolean  @map("is_read") @default(false)
+  createdAt       DateTime @map("created_at") @default(now())
+  updatedAt       DateTime @map("updated_at") @updatedAt
+  deletedAt       DateTime? @map("deleted_at")
+  userId          BigInt   @map("user_id")
+
+  User            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("notification")
+}
+
+model StepCount {
+  id             BigInt  @id @default(autoincrement())
+  steps          Int     @default(0)
+  date           DateTime
+  userId         BigInt  @map("user_id")
+  createdAt      DateTime @map("created_at") @default(now())
+  updatedAt      DateTime @map("updated_at") @updatedAt
+
+  User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("step_count")
+}
+
+model WorkoutDetail {
+  id          BigInt  @id @default(autoincrement())
+  step        Int
+  description String  @db.Text
+  workoutId   BigInt  @map("workout_id")
+
+  Workout     Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@map("workout_detail")
+}
+
+model PastWorkout {
+  id          BigInt  @id @default(autoincrement())
+  workoutName WorkoutName  @map("workout_name")
+
+  User        User[]
+
+  @@map("past_workout")
+}
+
+model Mission {
+  id          BigInt  @id @default(autoincrement())
+  title       String  @db.Text
+  description String  @db.Text
+  point       BigInt
+  createdAt   DateTime @map("created_at") @default(now())
+  updatedAt   DateTime @map("updated_at") @updatedAt
+  deletedAt   DateTime? @map("deleted_at")
+  MissionHistories MissionHistory[]
+
+  @@map("mission")
+}
+
+model MedicationTime {
+  id          BigInt  @id @default(autoincrement())
+  time        DateTime
+  complete    Boolean  @default(false)
+  createdAt   DateTime @map("created_at") @default(now())
+  updatedAt   DateTime @map("updated_at") @updatedAt
+  medicationId BigInt  @map("medication_id")
+
+  Medication  Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  @@map("medication_time")
+}
+
+model WorkoutCategory {
+  id          BigInt  @id @default(autoincrement())
+  name        String? @db.VarChar(255)
+  createdAt   DateTime? @map("created_at")
+  updatedAt   DateTime? @map("updated_at")
+
+  Workout     Workout[]
+
+  @@map("workout_category")
+}
+
+model MissionHistory {
+  id          BigInt  @id @default(autoincrement())
+  status      MissionStatus  @map("status")
+  createdAt   DateTime @map("created_at") @default(now())
+  updatedAt   DateTime @map("updated_at") @updatedAt
+  deletedAt   DateTime? @map("deleted_at")
+  userId      BigInt  @map("user_id")
+  missionId   BigInt  @map("mission_id")
+
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Mission     Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@map("mission_history")
+}
+
+model MediaFile {
+  id          BigInt  @id @default(autoincrement())
+  fileName    String  @map("file_name") @db.VarChar(255)
+  filePath    String  @map("file_path") @db.VarChar(255)
+  fileType    FileType @map("file_type")
+  createdAt   DateTime? @map("created_at")
+  deletedAt   DateTime? @map("deleted_at")
+  userId      BigInt  @map("user_id")
+
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("media_file")
+}
+
+model Workout {
+  id          BigInt  @id @default(autoincrement())
+  workoutName String? @map("workout_name") @db.VarChar(255)
+  videoLink   String  @map("video_link") @db.Text
+  description String? @db.Text
+  videoName   String  @map("video_name") @db.VarChar(255)
+  createdAt   DateTime @map("created_at") @default(now())
+  updatedAt   DateTime @map("updated_at") @updatedAt
+  deletedAt   DateTime? @map("deleted_at")
+  categoryId  BigInt  @map("category_id")
+
+  WorkoutCategory WorkoutCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  WorkoutDetail   WorkoutDetail[]
+  WorkoutRecord   WorkoutRecord[]
+  UserPastWorkout UserPastWorkout[]
+
+  @@map("workout")
+}
+
+model UserPastWorkout {
+  id             BigInt  @id @default(autoincrement())
+  userId         BigInt  @map("user_id")
+  workoutId      BigInt  @map("workout_id")
+
+  User           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Workout        Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@map("user_past_workout")
+}
+
+model Purchase {
+  id          BigInt  @id @default(autoincrement())
+  userId      BigInt  @map("user_id")
+  productId   BigInt  @map("product_id")
+
+  User        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("purchase")
+}
+
+model Product {
+  id          BigInt  @id @default(autoincrement())
+  name        String  @db.Text
+  price       BigInt
+  image       String? @db.Text
+
+  Purchase     Purchase[]
+
+  @@map("product")
+}
