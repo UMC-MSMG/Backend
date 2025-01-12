@@ -274,6 +274,578 @@
           }
         }
       }
+    },
+    "/api/users/signup": {
+      "post": {
+        "summary": "회원가입",
+        "description": "신규 회원 정보를 등록한다.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "회원가입 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignupResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/info/{id}": {
+      "get": {
+        "summary": "회원 정보 조회",
+        "description": "Retrieve user information by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}": {
+      "put": {
+        "summary": "회원 정보 업데이트",
+        "description": "회원 정보 업데이트",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "유저 id",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInfoResponse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "수정 완료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/phone/verify": {
+      "post": {
+        "summary": "인증번호 요청",
+        "description": "Send a verification code to the user's phone number",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhoneVerificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification code sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/phone/verify-code": {
+      "post": {
+        "summary": "인증번호 인증",
+        "description": "Verify the phone number using the received code",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhoneVerificationCodeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Phone number verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "로그인 api",
+        "description": "Login with email and password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth2/login/kakao": {
+      "get": {
+        "summary": "카카오 로그인",
+        "description": "카카오 로그인 페이지로 리다이렉트",
+        "responses": {
+          "302": {
+            "description": "Redirect to Kakao login"
+          }
+        }
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "summary": "모든 알림 조회",
+        "description": "사용자의 모든 알림을 조회합니다.",
+        "responses": {
+          "200": {
+            "description": "알림 목록",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Notification"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "새 알림 생성",
+        "description": "새로운 알림을 생성합니다.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "알림 생성 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Notification"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}": {
+      "get": {
+        "summary": "알림 조회",
+        "description": "ID를 기반으로 특정 알림을 조회합니다.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "알림 ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "알림 세부 정보",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Notification"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "알림을 찾을 수 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "알림 삭제",
+        "description": "ID를 기반으로 특정 알림을 삭제합니다.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "알림 ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "알림 삭제 성공"
+          },
+          "404": {
+            "description": "알림을 찾을 수 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SignupRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "phone_number": { "type": "string" },
+          "birth_date": { "type": "string", "format": "date" },
+          "height": { "type": "number" },
+          "weight": { "type": "number" },
+          "taking_medication": { "type": "boolean" },
+          "medication_frequency": {
+            "type": "object",
+            "properties": {
+              "days_per_week": { "type": "number" }
+            }
+          },
+          "medications": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "dosage": { "type": "string" },
+                "time_of_day": { "type": "string" }
+              }
+            }
+          },
+          "guardian": { "type": "string" },
+          "health_status": { "type": "string" },
+          "agree_to_terms": { "type": "boolean" }
+        },
+        "required": [
+          "name",
+          "phone_number",
+          "birth_date",
+          "height",
+          "weight",
+          "agree_to_terms"
+        ]
+      },
+      "SignupResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "userId": { "type": "string" }
+        }
+      },
+      "UserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The user ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the user"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "The phone number of the user"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "The birth date of the user (YYYY-MM-DD)"
+          },
+          "height": {
+            "type": "number",
+            "format": "float",
+            "description": "The height of the user in cm"
+          },
+          "weight": {
+            "type": "number",
+            "format": "float",
+            "description": "The weight of the user in kg"
+          },
+          "workout_frequency": {
+            "type": "integer",
+            "description": "The user's weekly workout frequency"
+          },
+          "consent_privacy_policy": {
+            "type": "boolean",
+            "description": "Whether the user has consented to the privacy policy"
+          },
+          "consent_terms_service": {
+            "type": "boolean",
+            "description": "Whether the user has consented to the terms of service"
+          },
+          "consent_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time of the user's consent (YYYY-MM-DD HH:MM:SS)"
+          },
+          "emergency_contact_phone": {
+            "type": "string",
+            "description": "The user's emergency contact phone number"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the user was created (YYYY-MM-DD HH:MM:SS)"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the user was last updated (YYYY-MM-DD HH:MM:SS)"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone_number",
+          "birth_date",
+          "height",
+          "weight",
+          "workout_frequency",
+          "consent_privacy_policy",
+          "consent_terms_service",
+          "consent_date",
+          "emergency_contact_phone",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code"
+          }
+        },
+        "required": ["error", "statusCode"]
+      },
+      "PhoneVerificationRequest": {
+        "type": "object",
+        "properties": {
+          "phone_number": {
+            "type": "string",
+            "description": "The user's phone number"
+          }
+        },
+        "required": ["phone_number"]
+      },
+      "PhoneVerificationCodeRequest": {
+        "type": "object",
+        "properties": {
+          "phone_number": {
+            "type": "string",
+            "description": "The user's phone number"
+          },
+          "verification_code": {
+            "type": "string",
+            "description": "The verification code sent to the user's phone"
+          }
+        },
+        "required": ["phone_number", "verification_code"]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The user's email address"
+          },
+          "password": {
+            "type": "string",
+            "description": "The user's password"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "The authentication token"
+          },
+          "message": {
+            "type": "string",
+            "description": "A message indicating the login status"
+          }
+        },
+        "required": ["token", "message"]
+      },
+      "VerificationResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A message indicating the verification status"
+          }
+        },
+        "required": ["message"]
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "알림 ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "알림 제목"
+          },
+          "message": {
+            "type": "string",
+            "description": "알림 내용"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "알림 생성 시간"
+          },
+          "read": {
+            "type": "boolean",
+            "description": "알림 읽음 여부"
+          }
+        },
+        "required": ["id", "title", "message", "created_at", "read"]
+      },
+      "NotificationInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "알림 제목"
+          },
+          "message": {
+            "type": "string",
+            "description": "알림 내용"
+          }
+        },
+        "required": ["title", "message"]
+      }
     }
   }
 }
