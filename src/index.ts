@@ -7,6 +7,7 @@ import path from "path";
 
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
+import workoutRoutes from "./routes/workout.routes";
 
 const app = express();
 const port = 3000;
@@ -20,6 +21,7 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // 라우트 연결
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/workouts", workoutRoutes); // Use the new workout routes
 
 // 서버 실행
 app.listen(port, () => {
@@ -39,15 +41,6 @@ app.get("/", (req, res) => {
 //운동 유형
 
 //운동 리스트 조회
-app.get("/api/workouts/:categoryId", (req, res) => {
-  const categoryId = parseInt(req.params.categoryId, 10);
-  const workouts = [
-    { exerciseId: 1, exerciseName: "스쿼트" },
-    { exerciseId: 2, exerciseName: "윗몸일으키기" },
-    { exerciseId: 3, exerciseName: "제자리뛰기" },
-  ];
-  res.json(workouts);
-});
 
 //운동 데이터 기록
 app.post("/api/workouts/log/:userId", (req, res) => {
