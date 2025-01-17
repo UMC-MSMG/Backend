@@ -3,7 +3,7 @@ import {
   getUserPoint,
   addUserPoint,
   useUserPoint,
-} from "../controllers/point.controller";
+} from "../controllers/points.controller";
 
 const router = Router();
 
