@@ -5,7 +5,7 @@ import {
   AddUserPointResponse,
   UseUserPointRequest,
   UseUserPointResponse,
-} from "../types/point.types";
+} from "../types/points.types";
 
 export const getUserPoint = async (
   req: Request,

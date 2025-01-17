@@ -8,7 +8,7 @@ import path from "path";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import workoutRoutes from "./routes/workout.routes";
-import pointRoutes from "./routes/point.routes";
+import pointRoutes from "./routes/points.routes";
 
 const app = express();
 const port = 3000;
