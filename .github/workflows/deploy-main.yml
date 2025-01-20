@@ -20,7 +20,8 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
           cat >>~/.ssh/config <<END
-          Host backend
+          Host Backend
+          
             HostName $EC2_HOST
             User $EC2_USER
             IdentityFile ~/.ssh/id_rsa
@@ -33,17 +34,22 @@ jobs:
 
       - name: Copy Workspace
         run: |
-          ssh backend 'sudo mkdir -p /opt/app'
-          ssh backend 'sudo chown ubuntu:ubuntu /opt/app'
-          scp -r ./[!.]* backend:/opt/app
+          ssh Backend
+           'sudo mkdir -p /opt/app'
+          ssh Backend
+           'sudo chown ubuntu:ubuntu /opt/app'
+          scp -r ./[!.]* Backend
+          :/opt/app
 
       - name: Install dependencies
         run: |
-          ssh backend 'npm install --prefix /opt/app/'
+          ssh Backend
+           'npm install --prefix /opt/app/'
 
       - name: Copy systemd service file
         run: |
-          ssh backend '
+          ssh Backend
+           '
             echo "[Unit]
             Description=UMC 7th Project
             After=network.target
@@ -59,9 +65,12 @@ jobs:
 
       - name: Enable systemd service
         run: |
-          ssh backend 'sudo systemctl daemon-reload'
-          ssh backend 'sudo systemctl enable app'
+          ssh Backend
+           'sudo systemctl daemon-reload'
+          ssh Backend
+           'sudo systemctl enable app'
 
       - name: Restart systemd service
         run: |
-          ssh backend 'sudo systemctl restart app'
+          ssh Backend
+           'sudo systemctl restart app'
