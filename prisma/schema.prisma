@@ -37,24 +37,36 @@ enum FileType {
 }
 
 // Models
+model Session {
+  id        String  @id @default(uuid())
+  sid       String   @unique
+  data      String   @db.Text
+  expiresAt DateTime @map("expires_at")
+
+  @@map("session")
+}
+
 model User {
-  id                    BigInt  @id @default(autoincrement())
+  id                    Int  @id @default(autoincrement()) @unique
   name                  String  @db.VarChar(255)
-  phoneNumber           String  @map("phone_number") @db.VarChar(15)
-  birthDate             DateTime @map("birth_date")
+  kakaoId               String?  @map("kakao_id") @db.VarChar(255)
+  phoneNumber           String?  @map("phone_number") @db.VarChar(15)
+  birthDate             DateTime? @map("birth_date")
   height                Float?
   weight                Float?
-  workoutFrequency      Int     @map("workout_frequency")
-  consentPrivacyPolicy  Boolean @map("consent_privacy_policy") @default(false)
-  consentTermsService   Boolean @map("consent_terms_service") @default(false)
-  consentDate           DateTime @map("consent_date")
+  workoutFrequency      Int?     @map("workout_frequency")
+  consentPrivacyPolicy  Boolean? @map("consent_privacy_policy") @default(false)
+  consentTermsService   Boolean? @map("consent_terms_service") @default(false)
+  consentDate           DateTime? @map("consent_date")
   emergencyContactPhone String? @map("emergency_contact_phone") @db.VarChar(255)
   deviceToken           String? @map("device_token")
-  points                Int     @default(0)
+  point                 Int     @default(0)
   image                 String? @db.Text
+  workoutLevel          String?    @map("workout_level") @db.VarChar(255)
   createdAt             DateTime @map("created_at") @default(now())
   updatedAt             DateTime @map("updated_at") @updatedAt
   deletedAt             DateTime? @map("deleted_at")
+  fontSize              Int?     @map("font_size")
 
   Medication            Medication[]
   WorkoutRecord         WorkoutRecord[]
@@ -69,8 +81,8 @@ model User {
 }
 
 model Medication {
-  id              BigInt  @id @default(autoincrement())
-  userId          BigInt  @map("user_id")
+  id              Int  @id @default(autoincrement())
+  userId          Int  @map("user_id")
   medName         String  @map("med_name") @db.VarChar(255)
   description     String? @db.Text
   activeFlag      ActiveFlag  @map("active_flag")
@@ -85,12 +97,12 @@ model Medication {
 }
 
 model WorkoutRecord {
-  id             BigInt  @id @default(autoincrement())
+  id             Int  @id @default(autoincrement())
   scheduledDate  DateTime @map("scheduled_date")
   completeDate   DateTime? @map("complete_date")
   isComplete     Boolean  @map("is_complete")
-  userId         BigInt   @map("user_id")
-  workoutId      BigInt   @map("workout_id")
+  userId         Int   @map("user_id")
+  workoutId      Int   @map("workout_id")
 
   User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Workout        Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
@@ -99,7 +111,7 @@ model WorkoutRecord {
 }
 
 model Notification {
-  id              BigInt  @id @default(autoincrement())
+  id              Int  @id @default(autoincrement())
   notificationType NotificationType  @map("notification_type")
   title           String  @db.Text
   message         String  @db.Text
@@ -109,17 +121,17 @@ model Notification {
   createdAt       DateTime @map("created_at") @default(now())
   updatedAt       DateTime @map("updated_at") @updatedAt
   deletedAt       DateTime? @map("deleted_at")
-  userId          BigInt   @map("user_id")
+  userId          Int   @map("user_id")
 
   User            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@map("notification")
 }
 
 model StepCount {
-  id             BigInt  @id @default(autoincrement())
+  id             Int  @id @default(autoincrement())
   steps          Int     @default(0)
   date           DateTime
-  userId         BigInt  @map("user_id")
+  userId         Int  @map("user_id")
   createdAt      DateTime @map("created_at") @default(now())
   updatedAt      DateTime @map("updated_at") @updatedAt
 
@@ -129,10 +141,11 @@ model StepCount {
 }
 
 model WorkoutDetail {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   step        Int
   description String  @db.Text
-  workoutId   BigInt  @map("workout_id")
+  workoutId   Int  @map("workout_id")
+  link        String? @db.Text
 
   Workout     Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
 
@@ -140,7 +153,7 @@ model WorkoutDetail {
 }
 
 model PastWorkout {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   workoutName WorkoutName  @map("workout_name")
 
   User        User[]
@@ -149,10 +162,11 @@ model PastWorkout {
 }
 
 model Mission {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   title       String  @db.Text
   description String  @db.Text
-  point       BigInt
+  point       Int
+  duration    Int
   createdAt   DateTime @map("created_at") @default(now())
   updatedAt   DateTime @map("updated_at") @updatedAt
   deletedAt   DateTime? @map("deleted_at")
@@ -162,12 +176,12 @@ model Mission {
 }
 
 model MedicationTime {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   time        DateTime
   complete    Boolean  @default(false)
   createdAt   DateTime @map("created_at") @default(now())
   updatedAt   DateTime @map("updated_at") @updatedAt
-  medicationId BigInt  @map("medication_id")
+  medicationId Int  @map("medication_id")
 
   Medication  Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
 
@@ -175,7 +189,7 @@ model MedicationTime {
 }
 
 model WorkoutCategory {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   name        String? @db.VarChar(255)
   createdAt   DateTime? @map("created_at")
   updatedAt   DateTime? @map("updated_at")
@@ -186,13 +200,13 @@ model WorkoutCategory {
 }
 
 model MissionHistory {
-  id          BigInt  @id @default(autoincrement())
-  status      MissionStatus  @map("status")
-  createdAt   DateTime @map("created_at") @default(now())
-  updatedAt   DateTime @map("updated_at") @updatedAt
-  deletedAt   DateTime? @map("deleted_at")
-  userId      BigInt  @map("user_id")
-  missionId   BigInt  @map("mission_id")
+  id          Int  @id @default(autoincrement())
+  status      MissionStatus  @map("status") @default(PENDING)
+  startDate   DateTime @map("start_date")
+  expirationDate     DateTime @map("expiration_date")
+  completedDate      DateTime? @map("completed_date")
+  userId      Int  @map("user_id")
+  missionId   Int  @map("mission_id")
 
   User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Mission     Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
@@ -201,13 +215,13 @@ model MissionHistory {
 }
 
 model MediaFile {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   fileName    String  @map("file_name") @db.VarChar(255)
   filePath    String  @map("file_path") @db.VarChar(255)
   fileType    FileType @map("file_type")
   createdAt   DateTime? @map("created_at")
   deletedAt   DateTime? @map("deleted_at")
-  userId      BigInt  @map("user_id")
+  userId      Int  @map("user_id")
 
   User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -215,15 +229,13 @@ model MediaFile {
 }
 
 model Workout {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   workoutName String? @map("workout_name") @db.VarChar(255)
-  videoLink   String  @map("video_link") @db.Text
   description String? @db.Text
-  videoName   String  @map("video_name") @db.VarChar(255)
   createdAt   DateTime @map("created_at") @default(now())
   updatedAt   DateTime @map("updated_at") @updatedAt
   deletedAt   DateTime? @map("deleted_at")
-  categoryId  BigInt  @map("category_id")
+  categoryId  Int  @map("category_id")
 
   WorkoutCategory WorkoutCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   WorkoutDetail   WorkoutDetail[]
@@ -234,9 +246,9 @@ model Workout {
 }
 
 model UserPastWorkout {
-  id             BigInt  @id @default(autoincrement())
-  userId         BigInt  @map("user_id")
-  workoutId      BigInt  @map("workout_id")
+  id             Int  @id @default(autoincrement())
+  userId         Int  @map("user_id")
+  workoutId      Int  @map("workout_id")
 
   User           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   Workout        Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
@@ -245,9 +257,9 @@ model UserPastWorkout {
 }
 
 model Purchase {
-  id          BigInt  @id @default(autoincrement())
-  userId      BigInt  @map("user_id")
-  productId   BigInt  @map("product_id")
+  id          Int  @id @default(autoincrement())
+  userId      Int  @map("user_id")
+  productId   Int  @map("product_id")
 
   User        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   Product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -256,9 +268,9 @@ model Purchase {
 }
 
 model Product {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   name        String  @db.Text
-  price       BigInt
+  price       Int
   image       String? @db.Text
 
   Purchase     Purchase[]
