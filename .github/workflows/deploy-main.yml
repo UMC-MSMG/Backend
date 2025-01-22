@@ -7,6 +7,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+      
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +31,7 @@ jobs:
 
           cat >>~/.ssh/config <<END
           Host Backend
-          
+
             HostName $EC2_HOST
             User $EC2_USER
             IdentityFile ~/.ssh/id_rsa
