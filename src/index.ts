@@ -19,6 +19,7 @@ import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import workoutRoutes from "./routes/workout.routes";
 import pointRoutes from "./routes/points.routes";
+import stepRoutes from "./routes/steps.routes";
 
 const app = express();
 const port = 3000;
@@ -31,7 +32,25 @@ app.use(express.json());
 app.use(express.static("public")); // 정적 파일 접근
 
 // Swagger setup
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+//Swagger 문서에 Bearer Token 인증 추가
+interface SwaggerDocument {
+  components?: any;
+  security?: any;
+}
+const swaggerDoc: SwaggerDocument = swaggerDocument;
+swaggerDoc.components = {    
+  securitySchemes: {
+    BearerAuth: {
+      type: "http",
+      scheme: "bearer",
+      bearerFormat: "JWT",
+    },
+  },
+};
+swaggerDoc.security = [{ BearerAuth: [] }];
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 //로그인 관련 passport, 함수, 라우팅
 initializePassport();
@@ -62,6 +81,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/workouts", workoutRoutes); // Use the new workout routes
 app.use("/api/points", pointRoutes);
+app.use("/api/steps", stepRoutes);
 
 // 서버 실행
 app.listen(port, () => {
