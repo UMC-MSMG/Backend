@@ -15,6 +15,7 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      # Uncomment if tests are required
       # - run: npm test
 
   deploy:
@@ -38,14 +39,21 @@ jobs:
             StrictHostKeyChecking no
           END
 
+      - name: Install Node.js and TSX on EC2
+        run: |
+          ssh Backend "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs"
+          ssh Backend "npm install -g tsx"
+
       - name: Copy Workspace
         run: |
           scp -r ./* Backend:/home/ubuntu/app/
 
-      - name: Install dependencies
+      - name: Install dependencies on EC2
         run: |
-          ssh Backend "cd /home/ubuntu/app && npm install"
+          ssh Backend "cd /home/ubuntu/app && npm ci"
 
-      - name: Start the application
+      - name: Start the application with PM2
         run: |
-          ssh Backend "cd /home/ubuntu/app && pm2 restart all || pm2 start npm --name 'umc-7th-app' -- start"
+          ssh Backend "pm2 delete umc-7th-app || true"
+          ssh Backend "pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
+
