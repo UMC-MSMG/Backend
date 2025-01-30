@@ -36,6 +36,11 @@ enum FileType {
   VIDEO
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 // Models
 model Session {
   id        String  @id @default(uuid())
@@ -50,6 +55,7 @@ model User {
   id                    Int  @id @default(autoincrement()) @unique
   name                  String  @db.VarChar(255)
   kakaoId               String?  @map("kakao_id") @db.VarChar(255)
+  gender                Gender?  
   phoneNumber           String?  @map("phone_number") @db.VarChar(15)
   birthDate             DateTime? @map("birth_date")
   height                Float?
@@ -58,7 +64,7 @@ model User {
   consentPrivacyPolicy  Boolean? @map("consent_privacy_policy") @default(false)
   consentTermsService   Boolean? @map("consent_terms_service") @default(false)
   consentDate           DateTime? @map("consent_date")
-  emergencyContactPhone String? @map("emergency_contact_phone") @db.VarChar(255)
+  // emergencyContactPhone String? @map("emergency_contact_phone") @db.VarChar(255)
   deviceToken           String? @map("device_token")
   point                 Int     @default(0)
   image                 String? @db.Text
