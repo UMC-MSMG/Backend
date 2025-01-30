@@ -4,3 +4,4 @@ test.http
 dist/
 .env
 prisma/migrations
+.vscode/
