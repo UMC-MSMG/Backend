@@ -31,25 +31,7 @@ app.use(express.json());
 app.use(express.static("public")); // 정적 파일 접근
 
 // Swagger setup
-
-//Swagger 문서에 Bearer Token 인증 추가
-interface SwaggerDocument {
-  components?: any;
-  security?: any;
-}
-const swaggerDoc: SwaggerDocument = swaggerDocument;
-swaggerDoc.components = {    
-  securitySchemes: {
-    BearerAuth: {
-      type: "http",
-      scheme: "bearer",
-      bearerFormat: "JWT",
-    },
-  },
-};
-swaggerDoc.security = [{ BearerAuth: [] }];
-
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //로그인 관련 passport, 함수, 라우팅
 initializePassport();
