@@ -84,7 +84,7 @@ export const useUserPoint = async (
       message: "포인트가 성공적으로 사용 되었습니다.",
     });
   } catch (error) {
-    if (error.message === "Insufficient points") {
+    if (error instanceof Error && error.message === "Insufficient points") {
       return res.status(400).json({
         userId,
         points,
