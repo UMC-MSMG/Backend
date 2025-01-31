@@ -1,37 +1,30 @@
-import * as pointsRepository from "../repositories/points.repository";
+import {
+  getUserPointRepository,
+  addUserPointsRepository,
+  useUserPointsRepository,
+} from "../repositories/points.repository";
 
-export const getUserPoints = async (userId: number) => {
-  return await pointsRepository.getUserPoints(userId);
+export const getUserPointService = async (userId: number): Promise<number> => {
+  const user = await getUserPointRepository(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return user.points;
 };
 
-export const addUserPoints = async (
-  userId: number,
-  points: number,
-  missionId: number,
-  title: string,
-  context: string
-) => {
-  const totalPoints = await pointsRepository.addUserPoints(userId, points);
-  return {
-    userId,
-    points,
-    totalPoints,
-    missionId,
-    message: "포인트가 성공적으로 적립되었습니다.",
-  };
+export const addUserPointService = async (userId: number, points: number) => {
+  const totalPoints = await addUserPointsRepository(userId, points);
+  return totalPoints;
 };
 
-export const useUserPoints = async (
-  userId: number,
-  points: number,
-  title: string,
-  context: string
-) => {
-  const totalPoints = await pointsRepository.useUserPoints(userId, points);
-  return {
-    userId,
-    points,
-    totalPoints,
-    message: "포인트가 성공적으로 사용 되었습니다.",
-  };
+export const useUserPointService = async (userId: number, points: number) => {
+  const user = await getUserPointRepository(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  if (user.points < points) {
+    throw new Error("Insufficient points");
+  }
+  const totalPoints = await useUserPointsRepository(userId, points);
+  return totalPoints;
 };

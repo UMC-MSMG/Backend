@@ -3,7 +3,7 @@ import {
   LogWorkoutRequest,
   LogWorkoutResponse,
   GetWorkoutsByCategoryResponse,
-  Workout,
+  WorkoutDetail,
 } from "../types/workout.types";
 import * as workoutRepository from "../repositories/workout.repository";
 
@@ -13,12 +13,13 @@ export const getWorkoutsByCategory = async (
   next: NextFunction
 ) => {
   try {
-    const categories = await workoutRepository.getWorkoutsByCategory();
-    const formattedCategories: Workout[] = categories.map((category) => ({
-      exerciseId: Number(category.id), 
-      exerciseName: category.name || "Unnamed Category",
+    const exercises = await workoutRepository.getWorkoutsByCategory();
+    const formattedWorkouts: WorkoutDetail[] = exercises.map((exercise) => ({
+      id: Number(exercise.id),
+      name: exercise.name || "",
     }));
-    res.json({ categories: formattedCategories });
+
+    res.json({ categories: formattedWorkouts });
   } catch (error) {
     next(error);
   }

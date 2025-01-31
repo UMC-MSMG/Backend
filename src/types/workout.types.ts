@@ -1,6 +1,9 @@
-export interface Workout {
-  exerciseId: bigint;
-  exerciseName: string;
+export interface WorkoutDetail {
+  id: number;
+  name: string;
+  videoLink?: string;
+  description?: string | null;
+  videoName?: string;
 }
 
 export interface LogWorkoutRequest {
@@ -13,5 +16,5 @@ export interface LogWorkoutResponse {
 }
 
 export interface GetWorkoutsByCategoryResponse {
-  categories: Workout[];
+  categories: WorkoutDetail[];
 }
