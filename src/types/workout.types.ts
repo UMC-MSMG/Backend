@@ -1,5 +1,5 @@
 export interface Workout {
-  exerciseId: number;
+  exerciseId: bigint;
   exerciseName: string;
 }
 
@@ -13,5 +13,5 @@ export interface LogWorkoutResponse {
 }
 
 export interface GetWorkoutsByCategoryResponse {
-  workouts: Workout[];
+  categories: Workout[];
 }
