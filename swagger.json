@@ -601,6 +601,170 @@
           }
         }
       }
+    },
+    "/api/steps/{userId}": {
+    "get": {
+      "summary": "사용자 걸음수 조회",
+      "description": "특정 날짜에 대한 사용자의 걸음수를 조회합니다.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "userId",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "조회할 사용자 ID"
+        },
+        {
+          "in": "query",
+          "name": "date",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "조회할 날짜 (YYYY-MM-DD 형식)"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "걸음수 조회 성공",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "steps": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "걸음수 조회 성공"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "잘못된 요청",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "해당 날짜의 걸음수 데이터가 존재하지 않음",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "서버 에러",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/steps/{userId}/add": {
+    "put": {
+      "summary": "사용자 걸음수 추가",
+      "description": "특정 날짜의 사용자 걸음수를 추가(업데이트)합니다.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "userId",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "걸음수를 추가할 사용자 ID"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "steps": {
+                  "type": "integer"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              "required": ["steps", "date"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "걸음수 추가 성공",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "steps": {
+                    "type": "integer"
+                  },
+                  "totalSteps": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "걸음수가 성공적으로 추가되었습니다."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "잘못된 요청",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "서버 에러",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -848,4 +1012,5 @@
       }
     }
   }
+}
 }
