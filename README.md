@@ -70,7 +70,7 @@
 
 다음의 환경 변수를 `.env` 파일에 설정해야 합니다.
 
-- `DATABASE_URL`: AWS RDS 데이터베이스 연결 문자열
+- `DATABASE_URL`: "mysql://msmgback:msmg7th!@msmg-umc-7th-db.cr4igq0qg3k2.ap-northeast-2.rds.amazonaws.com:3306/msmg"
 - `PORT`: 서버 포트 (기본값: 3000)
 
 ## 배포 환경
