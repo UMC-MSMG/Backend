@@ -127,12 +127,41 @@
     },
     "/api/auth/kakao/callback": {
       "get": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "카카오 로그인 콜백 API",
+        "description": "카카오 로그인 성공 시 JWT 반환",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "카카오 로그인 성공",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "카카오 로그인 성공",
+                  "user": {
+                    "id": 1,
+                    "name": "홍길동",
+                    "image": "https://example.com/profile.jpg"
+                  },
+                  "accessToken": "eyJhbGciOiJIUz...",
+                  "refreshToken": "eyJhbGciOiJIUz..."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "로그인 실패"
+          },
+          "500": {
+            "description": "서버 오류"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/workouts/{categoryId}": {
@@ -216,6 +245,46 @@
       }
     },
     "/api/points/{userId}/user": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/steps/{userId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/steps/{userId}/add": {
       "put": {
         "description": "",
         "parameters": [
