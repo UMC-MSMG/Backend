@@ -33,6 +33,35 @@ export const login = async (
 
 export class AuthController {
   static async kakaoCallback(req: Request, res: Response): Promise<void> {
+    /*
+      #swagger.tags = ['Auth']
+      #swagger.summary = '카카오 로그인 콜백 API'
+      #swagger.description = '카카오 로그인 성공 시 JWT 반환'
+      #swagger.security = [{ "bearerAuth": [] }]
+      #swagger.responses[200] = {description: "카카오 로그인 성공",
+        content: {
+            "application/json": {
+                example: {
+                    "message": "카카오 로그인 성공",
+                    "user": {
+                        "id": 1,
+                        "name": "홍길동",
+                        "image": "https://example.com/profile.jpg"
+                    },
+                    "accessToken": "eyJhbGciOiJIUz...",
+                    "refreshToken": "eyJhbGciOiJIUz..."
+                }
+            }
+        }
+      }
+      #swagger.responses[401] = {
+          description: "로그인 실패"
+      }
+      #swagger.responses[500] = {
+          description: "서버 오류"
+      }
+*/
+
     try {
       if (!req.user) {
         res.status(401).json({ message: "카카오 로그인 실패" });
