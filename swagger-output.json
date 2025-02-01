@@ -114,6 +114,7 @@
     "/api/auth/login/kakao": {
       "get": {
         "tags": ["Auth"],
+
         "summary": "카카오 로그인 리다이렉트 API",
         "description": "카카오 로그인 페이지로 이동합니다",
         "responses": {
@@ -158,6 +159,7 @@
             "bearerAuth": []
           }
         ]
+
       }
     },
     "/api/workouts/{categoryId}": {
@@ -299,6 +301,7 @@
           }
         }
       }
+
     }
   },
   "components": {

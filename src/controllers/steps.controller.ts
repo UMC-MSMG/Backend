@@ -84,6 +84,7 @@ export const addUserSteps: RequestHandler<
       res.status(400).json({
         error:
           "유효하지 않은 요청입니다. userId, steps, 그리고 date를 확인하세요.",
+
         statusCode: 400,
       });
       return;
