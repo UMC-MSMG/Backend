@@ -113,9 +113,7 @@
     },
     "/api/auth/login/kakao": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "카카오 로그인 리다이렉트 API",
         "description": "카카오 로그인 페이지로 이동합니다",
         "responses": {
@@ -127,9 +125,7 @@
     },
     "/api/auth/kakao/callback": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "카카오 로그인 콜백 API",
         "description": "카카오 로그인 성공 시 JWT 반환",
         "responses": {
