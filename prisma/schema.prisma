@@ -137,6 +137,7 @@ model StepCount {
 
   User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, date], name: "userId_date")
   @@map("step_count")
 }
 
