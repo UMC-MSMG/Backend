@@ -2,6 +2,7 @@
 //http://43.202.104.127/
 import express from "express"; // -> ES Module
 import swaggerUi from "swagger-ui-express";
+import swaggerFile from "../swagger-output.json";
 import dotenv from "dotenv";
 import * as swaggerDocument from "../swagger.json"; // Adjust the path as necessary
 import { Api } from "./models/Api"; // Adjust the path as necessary
@@ -32,7 +33,11 @@ app.use(express.json());
 app.use(express.static("public")); // 정적 파일 접근
 
 // Swagger setup
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerFile, { explorer: true })
+);
 
 //로그인 관련 passport, 함수, 라우팅
 initializePassport();
