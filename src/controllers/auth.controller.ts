@@ -6,6 +6,7 @@ import {
   LoginResponse,
   VerificationResponse,
 } from "../types/auth.types";
+import { AuthService } from "../services/auth.service";
 
 // 전화번호 인증 요청
 export const requestPhoneVerification = async (
@@ -29,8 +30,21 @@ export const login = async (
 ): Promise<void> => {};
 
 // 카카오 로그인
-export const kakaoLogin = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {};
+
+export class AuthController {
+  static async kakaoCallback(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ message: "카카오 로그인 실패" });
+        return;
+      }
+
+      const response = await AuthService.processKakaoLogin(req.user);
+      console.log(response);
+      res.json(response);
+    } catch (error) {
+      console.error("카카오 로그인 처리 중 오류:", error);
+      res.status(500).json({ message: "서버 오류" });
+    }
+  }
+}

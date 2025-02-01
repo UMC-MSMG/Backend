@@ -10,6 +10,7 @@ import { prisma } from "./db.config";
 //로그인 관련 라이브러리/함수 import
 import passport from "passport";
 import initializePassport from "./passport/config.passport";
+import initializeKakaoStrategy from "./passport/kakao.passport";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import session from "express-session";
 
@@ -34,6 +35,7 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //로그인 관련 passport, 함수, 라우팅
 initializePassport();
+initializeKakaoStrategy();
 
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 app.use(
