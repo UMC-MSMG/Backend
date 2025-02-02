@@ -17,11 +17,11 @@ export const generateRefreshToken = (userId: number) => {
   });
 };
 
-// JWT 검증 함수
-export const verifyToken = (token: string) => {
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET as string);
-  } catch (error) {
-    return null;
-  }
-};
+// // JWT 검증 함수
+// export const verifyToken = (token: string) => {
+//   try {
+//     return jwt.verify(token, process.env.JWT_SECRET as string);
+//   } catch (error) {
+//     return null;
+//   }
+// };

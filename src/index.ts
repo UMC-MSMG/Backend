@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import * as swaggerDocument from "../swagger.json"; // Adjust the path as necessary
 import { Api } from "./models/Api"; // Adjust the path as necessary
 import { prisma } from "./db.config";
+import "./types/express.d.ts"; // express.d.ts가 확실히 로드되도록 강제 import
 
 //로그인 관련 라이브러리/함수 import
 import passport from "passport";

@@ -41,6 +41,16 @@ enum Gender {
   FEMALE
 }
 
+enum Day {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
 // Models
 model Session {
   id        String  @id @default(uuid())
@@ -63,7 +73,7 @@ model User {
   workoutFrequency      Int?     @map("workout_frequency")
   consentPrivacyPolicy  Boolean? @map("consent_privacy_policy") @default(false)
   consentTermsService   Boolean? @map("consent_terms_service") @default(false)
-  consentDate           DateTime? @map("consent_date")
+  consentDate           DateTime? @map("consent_date") @default(now())
   // emergencyContactPhone String? @map("emergency_contact_phone") @db.VarChar(255)
   deviceToken           String? @map("device_token")
   point                 Int     @default(0)
@@ -90,16 +100,16 @@ model User {
 model Medication {
   id              Int  @id @default(autoincrement())
   userId          Int  @map("user_id")
-  medName         String  @map("med_name") @db.VarChar(255)
+  medName         String?  @map("med_name") @db.VarChar(255)
   description     String? @db.Text
-  activeFlag      ActiveFlag  @map("active_flag")
+  activeFlag      ActiveFlag?  @map("active_flag") @default(ACTIVE)
   createdAt       DateTime @map("created_at") @default(now())
   updatedAt       DateTime @map("updated_at") @updatedAt
   deletedAt       DateTime? @map("deleted_at")
-  medicationCycle Int     @map("medication_cycle")
 
   User            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   MedicationTime  MedicationTime[]
+  MedicationDay  MedicationDay[]
   @@map("medication")
 }
 
@@ -181,6 +191,18 @@ model Mission {
   MissionHistories MissionHistory[]
 
   @@map("mission")
+}
+
+model MedicationDay {
+  id          Int  @id @default(autoincrement())
+  day         Day
+  createdAt   DateTime @map("created_at") @default(now())
+  updatedAt   DateTime @map("updated_at") @updatedAt
+  medicationId Int  @map("medication_id")
+
+  Medication  Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  @@map("medication_day")
 }
 
 model MedicationTime {

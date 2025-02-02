@@ -7,7 +7,6 @@ import {
   AuthController,
 } from "../controllers/auth.controller";
 import passport from "passport";
-import { authenticateJWT } from "../middleware/auth.middleware";
 
 ///api/auth
 const router = Router();
