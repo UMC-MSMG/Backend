@@ -10,7 +10,7 @@ export const verifyToken = (
   next: NextFunction
 ): void => {
   const authHeader = req.headers.authorization;
-
+  console.log(authHeader);
   if (!authHeader) {
     res.status(401).json({ message: "인증 토큰이 필요합니다." });
     return;
