@@ -5,6 +5,16 @@
     "version": "1.0.0",
     "description": "MSMG node.js swagger"
   },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "로그인 관련 API"
+    },
+    {
+      "name": "Users",
+      "description": "유저 관련 API"
+    }
+  ],
   "paths": {
     "/api/points/{userId}": {
       "get": {

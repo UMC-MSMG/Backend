@@ -1,9 +1,10 @@
 import { Router } from "express";
+import express from "express";
 import {
   requestPhoneVerification,
   verifyPhoneCode,
   login,
-  kakaoLogin,
+  AuthController,
 } from "../controllers/auth.controller";
 import passport from "passport";
 
@@ -27,16 +28,24 @@ router.post(
 );
 
 // 카카오 로그인
-router.get("/login/kakao", passport.authenticate("kakao"));
-//콜백
+router.get(
+  "/login/kakao",
+  /*
+  #swagger.tags = ['Auth']
+  #swagger.summary = '카카오 로그인 리다이렉트 API'
+  #swagger.description = '카카오 로그인 페이지로 이동합니다'
+  #swagger.responses[302] = {
+       description: "카카오 로그인 페이지로 리디렉트"
+  }
+ */
+  passport.authenticate("kakao")
+);
+
+// 카카오 로그인 콜백, jwt 반환 api
 router.get(
   "/kakao/callback",
-  passport.authenticate("kakao", {
-    failureRedirect: "/login/kakao",
-    failureMessage: true,
-  }),
-  (req, res) => {
-    res.redirect("/");
-  }
+  passport.authenticate("kakao", { failureRedirect: "/login/kakao" }),
+  AuthController.kakaoCallback
 );
+
 export default router;

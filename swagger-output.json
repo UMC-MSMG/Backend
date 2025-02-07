@@ -31,52 +31,181 @@
         }
       }
     },
-    "/api/users/signup": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/users/info/{id}": {
-      "get": {
-        "description": "",
+    "/api/users/signup-info": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "회원가입 후 추가 정보 입력",
+        "description": "회원가입 후 추가 정보를 입력합니다. (JWT 인증 필요)",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
             }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/users/users/{userId}": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+          "200": {
+            "description": "회원 정보 업데이트 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "회원 정보가 성공적으로 업데이트되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 (토큰 없음)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 인증이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류"
+                    }
+                  }
+                }
+              }
             }
           }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
-        "responses": {
-          "default": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "string",
+                    "description": "사용자 이름"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "example": "string",
+                    "description": "휴대폰 번호"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "MALE",
+                      "FEMALE"
+                    ],
+                    "example": "MALE",
+                    "description": "성별"
+                  },
+                  "birth_date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2025-02-02",
+                    "description": "생년월일 (YYYY-MM-DD)"
+                  },
+                  "height": {
+                    "type": "number",
+                    "example": 0,
+                    "description": "키 (cm)"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "example": 0,
+                    "description": "몸무게 (kg)"
+                  },
+                  "medications": {
+                    "type": "array",
+                    "description": "복용 중인 약물 목록",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "medName": {
+                          "type": "string",
+                          "example": "string",
+                          "description": "약물 이름"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "string",
+                          "description": "약물 설명"
+                        },
+                        "medicationDays": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "MON",
+                              "TUE",
+                              "WED",
+                              "THU",
+                              "FRI",
+                              "SAT",
+                              "SUN"
+                            ]
+                          },
+                          "example": [
+                            "MON",
+                            "TUE"
+                          ],
+                          "description": "복용 요일"
+                        },
+                        "medicationTimes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+                            "example": "10:30"
+                          },
+                          "example": [
+                            "10:30"
+                          ],
+                          "description": "복용 시간 (HH:MM)"
+                        }
+                      }
+                    }
+                  },
+                  "agree_to_terms": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "이용 약관 동의 여부"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -127,12 +256,41 @@
     },
     "/api/auth/kakao/callback": {
       "get": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "카카오 로그인 콜백 API",
+        "description": "카카오 로그인 성공 시 JWT 반환",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "카카오 로그인 성공",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "카카오 로그인 성공",
+                  "user": {
+                    "id": 1,
+                    "name": "홍길동",
+                    "image": "https://example.com/profile.jpg"
+                  },
+                  "accessToken": "eyJhbGciOiJIUz...",
+                  "refreshToken": "eyJhbGciOiJIUz..."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "로그인 실패"
+          },
+          "500": {
+            "description": "서버 오류"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/workouts/{categoryId}": {
@@ -216,6 +374,46 @@
       }
     },
     "/api/points/{userId}/user": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/steps/{userId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/steps/{userId}/add": {
       "put": {
         "description": "",
         "parameters": [
