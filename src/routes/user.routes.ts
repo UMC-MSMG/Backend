@@ -7,5 +7,7 @@ const router = express.Router();
 router.post("/signup", userController.createUser);
 router.get("/info/:id", userController.getUserInfo);
 router.put("/users/:userId", userController.updateUser);
+router.get("/all", userController.getAllUsers);
+
 
 export default router;
