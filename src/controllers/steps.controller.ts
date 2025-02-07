@@ -36,8 +36,10 @@ export const getUserSteps: RequestHandler<
       return;
     }
 
-    const parsedDate = new Date(dateQuery);
-    parsedDate.setHours(0, 0, 0, 0);
+    //const parsedDate = new Date(dateQuery);
+    const parsedDate = new Date(dateQuery).toISOString(); // UTC 기준으로 변환
+
+    //parsedDate.setHours(0, 0, 0, 0);
 
     const userSteps = await prisma.stepCount.findFirst({
       where: {
@@ -107,8 +109,10 @@ export const addUserSteps: RequestHandler<
       return;
     }
 
-    const parsedDate = new Date(date);
-    parsedDate.setHours(0, 0, 0, 0);
+    //const parsedDate = new Date(date);
+    //parsedDate.setHours(0, 0, 0, 0);
+    const parsedDate = new Date(date).toISOString(); // UTC 기준으로 변환
+
 
     const userSteps = await prisma.stepCount.upsert({
       where: {
