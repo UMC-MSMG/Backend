@@ -4,7 +4,7 @@ import express from "express"; // -> ES Module
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "../swagger-output.json";
 import dotenv from "dotenv";
-import * as swaggerDocument from "../swagger.json"; // Adjust the path as necessary
+// import * as swaggerDocument from "../swagger.json"; // Adjust the path as necessary
 import { Api } from "./models/Api"; // Adjust the path as necessary
 import { prisma } from "./db.config";
 import "./types/express.d.ts"; // express.d.ts가 확실히 로드되도록 강제 import
@@ -22,6 +22,7 @@ import authRoutes from "./routes/auth.routes";
 import workoutRoutes from "./routes/workout.routes";
 import pointRoutes from "./routes/points.routes";
 import stepRoutes from "./routes/steps.routes";
+import historyRoutes from "./routes/history.routes";
 
 const app = express();
 const port = 3000;
@@ -70,6 +71,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/workouts", workoutRoutes); // Use the new workout routes
 app.use("/api/points", pointRoutes);
 app.use("/api/steps", stepRoutes);
+app.use("/api/histories", historyRoutes);
 
 // 서버 실행
 app.listen(port, () => {
