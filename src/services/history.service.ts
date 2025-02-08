@@ -14,7 +14,6 @@ export const historyService = {
     //     (date.getDate() < 9 ? "0" + date.getDate() : date.getDate());
     //   return dateFormat2;
     // }
-    const today = new Date();
     const firstDayOfThisMonth = new Date(
       new Date().getFullYear(),
       new Date().getMonth(),

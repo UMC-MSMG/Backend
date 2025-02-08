@@ -18,8 +18,9 @@ export const historyController = {
                   properties: {
                       this_month_earnings: { type: "integer", example: 200, description: "이번 달 획득한 포인트" },
                       last_month_earnings: { type: "integer", example: 110, description: "지난 달 획득한 포인트" },
-                      earnings_difference: { type: "integer", example: 90, description: "이번 달과 지난 달의 포인트 차이" },
-                      continue_days: { type: "integer", example: 3, description: "연속 운동 일수" },
+                      sequence_days: { type: "integer", example: 4, description: "연속 운동 일수" },
+                      sequence_start: { type: "date", example: "2025-02-05T00:00:00.000Z", description: "연속 운동 시작일" },
+                      sequence_end: { type: "date", example: "2025-02-08T11:02:46.103Z", description: "연속 운동 끝" },
                       weekly_exercise: { 
                           type: "object",
                           properties: {
@@ -28,11 +29,11 @@ export const historyController = {
                               wednesday: { type: "boolean", nullable: true, example: true, description: "수요일 운동 여부" },
                               thursday: { type: "boolean", nullable: true, example: true, description: "목요일 운동 여부" },
                               friday: { type: "boolean", nullable: true, example: true, description: "금요일 운동 여부" },
-                              saturday: { type: "boolean", nullable: true, example: null, description: "토요일 운동 여부" },
-                              sunday: { type: "boolean", nullable: true, example: null, description: "일요일 운동 여부" }
+                              saturday: { type: "boolean", nullable: true, example: true, description: "토요일 운동 여부" },
+                              sunday: { type: "boolean", nullable: true, example: false, description: "일요일 운동 여부" }
                           },
-                          description: "주간 운동 기록 (운동했으면 true, 안했으면 false, 기록 없으면 null)"
-                      }
+                      },
+                      workout_level: {type: "string", example: "NORMAL"}
                   }
               }
           }

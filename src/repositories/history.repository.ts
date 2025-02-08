@@ -46,19 +46,51 @@ export const HistoryRepository = {
     );
 
     // 3. 연속 운동 일수
-    // const continueCount = await prisma.$queryRaw`
-    //     -- SELECT *
-    //     -- FROM
-    //     -- (
-    //     --     SELECT
-    //     --         @d:=complete_date
-    //     --         @n:=CONVERT(IF(DATEDIFF(complete_date, @d) = 1, @name + 1, 1), INT) AS count,
-    //     --     FROM workout_record
-    //     --     WHERE user_id = ${userId} AND is_completed = 1
-    //     --     ORDER BY complete_date DESC
-    //     -- ) AS t
-    //     -- WHERE user_id = ${userId}
-    // `;
+    const records = await prisma.workoutRecord.findMany({
+      where: { userId: userId, isComplete: true },
+      select: { completeDate: true },
+      orderBy: { completeDate: "desc" },
+    });
+    console.log(records);
+    const dateList: any = Array.from(
+      new Set(records.map((r) => r.completeDate?.toISOString().split("T")[0]))
+    )
+      .sort()
+      .reverse();
+
+    console.log(dateList);
+
+    const today = new Date().toISOString().split("T")[0];
+
+    let sequenceStart: Date | null;
+    let count = 0;
+
+    if (records.length == 0) {
+      console.log(records.length);
+      sequenceStart = null;
+    } else if (today != dateList[0]) {
+      console.log(new Date(dateList[0]), today, "오늘이 아님");
+      sequenceStart = null;
+    } else {
+      let tempDate = new Date(dateList[0]);
+
+      for (let i = 1; i < dateList.length; i++) {
+        count++;
+        const currentDate = new Date(dateList[i]);
+        console.log("날짜", tempDate, currentDate);
+        const diff =
+          (tempDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24);
+
+        if (diff == 1) {
+          tempDate = currentDate;
+          console.log(tempDate, count);
+        } else {
+          break;
+        }
+      }
+      console.log(tempDate, count);
+      sequenceStart = tempDate;
+    }
 
     // 4️⃣ **이번 주 운동 여부**
     const weeklyExercise = await prisma.workoutRecord.findMany({
@@ -68,17 +100,18 @@ export const HistoryRepository = {
           gte: startOfWeek,
         },
       },
+      orderBy: [{ completeDate: "asc" }],
     });
 
     // 주간 운동 여부 초기화 (null: 미래 날짜, false: 운동 안 함, true: 운동함)
-    const weeklyExerciseStatus: Record<string, boolean | null> = {
-      monday: null,
-      tuesday: null,
-      wednesday: null,
-      thursday: null,
-      friday: null,
-      saturday: null,
-      sunday: null,
+    const weeklyExerciseStatus: Record<string, boolean> = {
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+      saturday: false,
+      sunday: false,
     };
 
     // 운동한 날 업데이트
@@ -91,16 +124,25 @@ export const HistoryRepository = {
       }
     });
 
+    // **5️⃣ 운동 레벨**
+    const workoutLevel = await prisma.user.findFirst({
+      where: { id: userId },
+      select: { workoutLevel: true },
+    });
+    console.log(workoutLevel);
+
     return {
       this_month_earnings: thisMonthEarningsSum || 0,
       last_month_earnings: lastMonthEarningsSum,
-      earnings_difference: thisMonthEarningsSum - lastMonthEarningsSum,
-      continue_days: 3,
-      weekly_exercise: weeklyExerciseStatus,
+      sequence_days: count,
+      sequence_start: sequenceStart,
+      sequence_end: new Date(),
+      weekly_workout: weeklyExerciseStatus,
+      workout_level: workoutLevel?.workoutLevel,
     };
   },
 
-  // 달력 데이터 반환 레포지토리 함수
+  //////////////////////////////// 달력 데이터 반환 레포지토리 함수
   getCalender: async (
     userId: number,
     firstDayOfMonth: Date,
