@@ -210,22 +210,139 @@
         }
       }
     },
-    "/api/auth/phone/verify": {
+    "/api/auth/login/phone/verify": {
       "post": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "[ 로그인 ] 전화번호 인증 코드 전송",
+        "description": "로그인에 필요한 전화번호 인증 코드 전송 API",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "인증 코드 전송 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "인증번호가 전송되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (휴대폰 번호 미입력)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "휴대폰 번호를 입력해주세요"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "존재하지 않는 휴대폰 번호",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "존재하지 않는 휴대폰 번호입니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNum": {
+                    "type": "string",
+                    "example": "01012345678"
+                  }
+                },
+                "required": [
+                  "phoneNum"
+                ]
+              }
+            }
           }
         }
       }
     },
-    "/api/auth/phone/verify-code": {
+    "/api/auth/login/phone/verify-code": {
       "post": {
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNum": {
+                    "example": "any"
+                  },
+                  "code": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }

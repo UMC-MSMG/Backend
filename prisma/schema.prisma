@@ -72,7 +72,7 @@ model User {
   name                  String  @db.VarChar(255)
   kakaoId               String?  @map("kakao_id") @db.VarChar(255)
   gender                Gender?  
-  phoneNumber           String?  @map("phone_number") @db.VarChar(15)
+  phoneNumber           String?  @map("phone_number") @db.VarChar(11) @unique
   birthDate             DateTime? @map("birth_date")
   height                Float?
   weight                Float?
