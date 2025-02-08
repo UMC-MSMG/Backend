@@ -573,10 +573,34 @@
         ]
       }
     },
-    "/api/histories/calendar": {
+    "/api/histories/calendar/{year}/{month}": {
       "get": {
-        "description": "",
+        "tags": [
+          "History"
+        ],
+        "summary": "운동일지 달력 데이터 반환",
+        "description": "해당 달의 운동한 일수와 번 돈을 반환합니다. (JWT 인증 필요)",
         "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 2025,
+            "description": "조회할 연도 (4자리 숫자, 예: 2025)"
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "02",
+            "description": "조회할 월 두자리수로 (1~12, 예: 2월 → 02)"
+          },
           {
             "name": "authorization",
             "in": "header",
@@ -586,13 +610,90 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "달력 데이터 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "month": {
+                      "type": "string",
+                      "example": "2025-02",
+                      "description": "조회한 연도 및 월 (YYYY-MM)"
+                    },
+                    "monthly_workout_days": {
+                      "type": "integer",
+                      "example": 4,
+                      "description": "해당 달 동안 운동한 총 일수"
+                    },
+                    "monthly_earnings": {
+                      "type": "integer",
+                      "example": 150,
+                      "description": "해당 달 동안 번 포인트"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (유효하지 않은 연도/월 입력)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid year or month format"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "401": {
-            "description": "Unauthorized"
+            "description": "인증 실패 (토큰 없음 또는 유효하지 않음)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 인증이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
           },
           "403": {
             "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류"
+                    }
+                  }
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },

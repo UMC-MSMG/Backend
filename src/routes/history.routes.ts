@@ -5,6 +5,10 @@ import { historyController } from "../controllers/history.controller";
 const router = express.Router();
 
 router.get("/summary", verifyToken, historyController.getSummary);
-router.get("/calendar", verifyToken, historyController.getCalendar);
+router.get(
+  "/calendar/:year/:month",
+  verifyToken,
+  historyController.getCalendar
+);
 
 export default router;
