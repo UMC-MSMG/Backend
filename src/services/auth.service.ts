@@ -1,8 +1,12 @@
 import { KakaoLoginResponseDto } from "../dtos/auth.dto";
 import coolsms from "coolsms-node-sdk";
-import { AuthRepository } from "../repositories/auth.repository";
+import {
+  AuthRepository,
+  updateRefreshToken,
+} from "../repositories/auth.repository";
 import dotenv from "dotenv";
 import { VerificationData } from "../types/auth.types";
+import { generateAccessToken, generateRefreshToken } from "../jwt";
 
 dotenv.config();
 
@@ -75,7 +79,7 @@ export const Verification = {
     try {
       const response = await messageService.sendOne({
         to: phoneNum,
-        from: "01045961425",
+        from: process.env.PHONE as string,
         text: `[만수무강] 인증번호: ${code}`,
         autoTypeDetect: true,
       });
@@ -86,6 +90,13 @@ export const Verification = {
   //
   verifyLoginCode: async (phoneNum: string, code: string) => {
     const storedData = verificationCode.get(phoneNum);
+    // @ts-ignore
+    console.log(
+      Array.from(verificationCode.entries()).map(([phoneNum, data]) => ({
+        phoneNum,
+        ...data,
+      }))
+    );
 
     if (!storedData) {
       return { success: false, message: "인증번호가 존재하지 않습니다." };
@@ -104,7 +115,12 @@ export const Verification = {
     }
     verificationCode.delete(phoneNum);
     clearTimeout(timeoutId);
-    return { success: true, message: "인증이 완료되었습니다." };
+    const user = await AuthRepository.findPhoneNum(phoneNum);
+    return {
+      success: true,
+      message: "인증이 완료되었습니다.",
+      userId: user?.id,
+    };
   },
   // 존재하는 전화번호인지 확인하기
   isPhoneNum: async (phoneNum: string) => {
@@ -114,5 +130,14 @@ export const Verification = {
     } else {
       return true;
     }
+  },
+  handleToken: async (userId: number) => {
+    const accessToken = generateAccessToken(userId);
+    const refreshToken = generateRefreshToken(userId);
+    await updateRefreshToken(userId, refreshToken);
+    return { user_id: userId, accessToken, refreshToken };
+  },
+  test: async (phoneNum: string) => {
+    return await AuthRepository.findPhoneNum(phoneNum);
   },
 };
