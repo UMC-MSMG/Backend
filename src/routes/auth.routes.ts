@@ -7,10 +7,11 @@ import passport from "passport";
 const router = Router();
 
 // 전화번호 인증 요청
-router.post("/login/phone/verify", AuthController.sendLoginCode);
+router.post("/login/phone/verify-request", AuthController.sendLoginCode);
 
 // 인증 코드 확인
-router.post("/login/phone/verify-code", AuthController.verifyLoginCode);
+router.post("/login/phone/verify-check", AuthController.verifyLoginCode);
+router.post("/test", AuthController.test);
 
 // 이메일/비밀번호 일반 로그인
 router.post(
