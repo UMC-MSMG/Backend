@@ -1,4 +1,10 @@
 import { KakaoLoginResponseDto } from "../dtos/auth.dto";
+import coolsms from "coolsms-node-sdk";
+import { AuthRepository } from "../repositories/auth.repository";
+import dotenv from "dotenv";
+import { VerificationData } from "../types/auth.types";
+
+dotenv.config();
 
 export class AuthService {
   static async processKakaoLogin(user: any): Promise<KakaoLoginResponseDto> {
@@ -25,3 +31,88 @@ export class AuthService {
     }
   }
 }
+
+// @ts-ignore
+const mysms = coolsms.default;
+
+const messageService = new mysms(
+  process.env.SMS_API_KEY as string,
+  process.env.SMS_API_SECRET as string
+);
+
+//랜덤 숫자 6자리 생성 함수
+const generateVerificationCode = (): string => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+//인증 코드 객체 생성
+const verificationCode = new Map<string, VerificationData>();
+
+//export 함수
+export const Verification = {
+  //인증 코드 전송 함수
+  sendCode: async (phoneNum: string) => {
+    const code = generateVerificationCode();
+    const expiresAt = Date.now() + 5 * 60 * 1000;
+
+    //기존 존재하는 인증 번호 삭제
+    if (verificationCode.has(phoneNum)) {
+      clearTimeout(verificationCode.get(phoneNum)!.timeoutId); // 기존 타이머 제거
+      verificationCode.delete(phoneNum);
+    }
+
+    // 5분후 메모리에서 자동 삭제하는 코드
+    const timeoutId = setTimeout(
+      () => {
+        verificationCode.delete(phoneNum);
+        console.log(`⏳ ${phoneNum}의 인증 코드가 자동 삭제되었습니다.`);
+      },
+      5 * 60 * 1000
+    ); //5분
+
+    verificationCode.set(phoneNum, { code, expiresAt, timeoutId });
+
+    try {
+      const response = await messageService.sendOne({
+        to: phoneNum,
+        from: "01045961425",
+        text: `[만수무강] 인증번호: ${code}`,
+        autoTypeDetect: true,
+      });
+      console.log(`📩 ${phoneNum}로 인증번호 전송: ${code}`, response);
+      return { success: true, message: "인증번호가 전송되었습니다." };
+    } catch (error) {}
+  },
+  //
+  verifyLoginCode: async (phoneNum: string, code: string) => {
+    const storedData = verificationCode.get(phoneNum);
+
+    if (!storedData) {
+      return { success: false, message: "인증번호가 존재하지 않습니다." };
+    }
+    const { code: storedCode, expiresAt, timeoutId } = storedData;
+    if (Date.now() > expiresAt) {
+      verificationCode.delete(phoneNum);
+      clearTimeout(timeoutId); // 타이머 제거
+      return {
+        success: false,
+        message: "인증번호가 만료되었습니다. 다시 요청하세요.",
+      };
+    }
+    if (storedCode !== code) {
+      return { success: false, message: "인증번호가 올바르지 않습니다." }; // 🚀 여기서 throw 대신 객체 반환
+    }
+    verificationCode.delete(phoneNum);
+    clearTimeout(timeoutId);
+    return { success: true, message: "인증이 완료되었습니다." };
+  },
+  // 존재하는 전화번호인지 확인하기
+  isPhoneNum: async (phoneNum: string) => {
+    const user = await AuthRepository.findPhoneNum(phoneNum);
+    if (!user) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+};
