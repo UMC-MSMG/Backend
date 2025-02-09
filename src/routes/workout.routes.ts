@@ -6,7 +6,7 @@ import {
 
 const router = Router();
 
-router.get("/:categoryId", getWorkoutsByCategory);
+router.get("/", getWorkoutsByCategory);
 router.post("/log/:userId", logWorkout);
 
 export default router;
