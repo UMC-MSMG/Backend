@@ -1,0 +1,1221 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MSMG",
+    "description": "만수무강 스웨거.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "로그인, jwt 관련 API"
+    },
+    {
+      "name": "Users",
+      "description": "유저 관련 API"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/users/signup-info": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "회원가입 후 추가 정보 입력",
+        "description": "회원가입 후 추가 정보를 입력합니다. (JWT 인증 필요)",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "회원 정보 업데이트 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "회원 정보가 성공적으로 업데이트되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 (토큰 없음)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 인증이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "string",
+                    "description": "사용자 이름"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "example": "string",
+                    "description": "휴대폰 번호"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "MALE",
+                      "FEMALE"
+                    ],
+                    "example": "MALE",
+                    "description": "성별"
+                  },
+                  "birth_date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2025-02-02",
+                    "description": "생년월일 (YYYY-MM-DD)"
+                  },
+                  "height": {
+                    "type": "number",
+                    "example": 0,
+                    "description": "키 (cm)"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "example": 0,
+                    "description": "몸무게 (kg)"
+                  },
+                  "medications": {
+                    "type": "array",
+                    "description": "복용 중인 약물 목록",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "medName": {
+                          "type": "string",
+                          "example": "string",
+                          "description": "약물 이름"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "string",
+                          "description": "약물 설명"
+                        },
+                        "medicationDays": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "MON",
+                              "TUE",
+                              "WED",
+                              "THU",
+                              "FRI",
+                              "SAT",
+                              "SUN"
+                            ]
+                          },
+                          "example": [
+                            "MON",
+                            "TUE"
+                          ],
+                          "description": "복용 요일"
+                        },
+                        "medicationTimes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+                            "example": "10:30"
+                          },
+                          "example": [
+                            "10:30"
+                          ],
+                          "description": "복용 시간 (HH:MM)"
+                        }
+                      }
+                    }
+                  },
+                  "agree_to_terms": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "이용 약관 동의 여부"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login/phone/verify-request": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "[ 로그인 ] 전화번호 인증 코드 전송",
+        "description": "로그인에 필요한 전화번호 인증 코드 전송 API. 근데 이 api 사용할때마다 50원씩 부과됩니다... 또 하루 최대 50회 제한 있어요.",
+        "responses": {
+          "200": {
+            "description": "인증 코드 전송 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "인증번호가 전송되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (휴대폰 번호 미입력)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "휴대폰 번호를 입력해주세요"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "존재하지 않는 휴대폰 번호",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "존재하지 않는 휴대폰 번호입니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNum": {
+                    "type": "string",
+                    "example": "01012345678"
+                  }
+                },
+                "required": [
+                  "phoneNum"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login/phone/verify-check": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "[ 로그인 ] 휴대폰 인증번호 확인",
+        "description": "사용자가 받은 인증번호를 확인하여 로그인 처리하는 API",
+        "responses": {
+          "200": {
+            "description": "로그인 성공 (토큰 발급)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "accessToken": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUz..."
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUz..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (필수 데이터 누락)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "휴대폰 번호와 인증번호가 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 (잘못된 인증번호)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "인증번호가 올바르지 않습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "등록되지 않은 전화번호",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "해당 전화번호로 등록된 계정이 없습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNum": {
+                    "type": "string",
+                    "example": "01011112222"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "902591"
+                  }
+                },
+                "required": [
+                  "phoneNum",
+                  "code"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/test": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNum": {
+                    "example": "any"
+                  },
+                  "code": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/auth/login/kakao": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "카카오 로그인 리다이렉트 API",
+        "description": "카카오 로그인 페이지로 이동합니다",
+        "responses": {
+          "302": {
+            "description": "카카오 로그인 페이지로 리디렉트"
+          }
+        }
+      }
+    },
+    "/api/auth/kakao/callback": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "카카오 로그인 콜백 API",
+        "description": "카카오 로그인 성공 시 JWT 반환",
+        "responses": {
+          "200": {
+            "description": "카카오 로그인 성공",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "카카오 로그인 성공",
+                  "user": {
+                    "id": 1,
+                    "name": "홍길동",
+                    "image": "https://example.com/profile.jpg"
+                  },
+                  "accessToken": "eyJhbGciOiJIUz...",
+                  "refreshToken": "eyJhbGciOiJIUz..."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "로그인 실패"
+          },
+          "500": {
+            "description": "서버 오류"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/workouts/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/workouts/log/{userId}": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/points/{userId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/points/{userId}/add": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/points/{userId}/use": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/steps/{userId}": {
+      "get": {
+        "tags": [
+          "Steps"
+        ],
+        "summary": "사용자 걸음수 조회",
+        "description": "특정 날짜에 대한 사용자의 걸음수를 조회합니다.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "조회할 사용자 ID"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "format": "date",
+            "description": "조회할 날짜 (YYYY-MM-DD 형식)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "걸음수 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "steps": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "걸음수 조회 성공"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "해당 날짜의 걸음수 데이터가 없음"
+          }
+        }
+      }
+    },
+    "/api/steps/{userId}/add": {
+      "put": {
+        "tags": [
+          "Steps"
+        ],
+        "summary": "사용자 걸음수 추가",
+        "description": "특정 날짜의 사용자 걸음수를 추가(업데이트)합니다.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "걸음수를 추가할 사용자 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "걸음수 추가 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "steps": {
+                    "type": "integer"
+                  },
+                  "totalSteps": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "걸음수가 성공적으로 추가되었습니다."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "steps": {
+                  "type": "integer",
+                  "description": "추가할 걸음수"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/histories/summary": {
+      "get": {
+        "tags": [
+          "History"
+        ],
+        "summary": "운동일지 요약 데이터 반환",
+        "description": "사용자의 운동일지에 대한 요약 데이터를 반환합니다. (JWT 인증 필요)",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "요약 정보 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "this_month_earnings": {
+                      "type": "integer",
+                      "example": 200,
+                      "description": "이번 달 획득한 포인트"
+                    },
+                    "last_month_earnings": {
+                      "type": "integer",
+                      "example": 110,
+                      "description": "지난 달 획득한 포인트"
+                    },
+                    "sequence_days": {
+                      "type": "integer",
+                      "example": 4,
+                      "description": "연속 운동 일수"
+                    },
+                    "sequence_start": {
+                      "type": "date",
+                      "example": "2025-02-05T00:00:00.000Z",
+                      "description": "연속 운동 시작일"
+                    },
+                    "sequence_end": {
+                      "type": "date",
+                      "example": "2025-02-08T11:02:46.103Z",
+                      "description": "연속 운동 끝"
+                    },
+                    "weekly_exercise": {
+                      "type": "object",
+                      "properties": {
+                        "monday": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "example": false,
+                          "description": "월요일 운동 여부"
+                        },
+                        "tuesday": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "example": false,
+                          "description": "화요일 운동 여부"
+                        },
+                        "wednesday": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "example": true,
+                          "description": "수요일 운동 여부"
+                        },
+                        "thursday": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "example": true,
+                          "description": "목요일 운동 여부"
+                        },
+                        "friday": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "example": true,
+                          "description": "금요일 운동 여부"
+                        },
+                        "saturday": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "example": true,
+                          "description": "토요일 운동 여부"
+                        },
+                        "sunday": {
+                          "type": "boolean",
+                          "nullable": true,
+                          "example": false,
+                          "description": "일요일 운동 여부"
+                        }
+                      }
+                    },
+                    "workout_level": {
+                      "type": "string",
+                      "example": "NORMAL"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 (토큰 없음)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 인증이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/histories/calendar/{year}/{month}": {
+      "get": {
+        "tags": [
+          "History"
+        ],
+        "summary": "운동일지 달력 데이터 반환",
+        "description": "해당 달의 운동한 일수와 번 돈을 반환합니다. (JWT 인증 필요)",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 2025,
+            "description": "조회할 연도 (4자리 숫자, 예: 2025)"
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "02",
+            "description": "조회할 월 두자리수로 (1~12, 예: 2월 → 02)"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "달력 데이터 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "month": {
+                      "type": "string",
+                      "example": "2025-02",
+                      "description": "조회한 연도 및 월 (YYYY-MM)"
+                    },
+                    "monthly_workout_days": {
+                      "type": "integer",
+                      "example": 4,
+                      "description": "해당 달 동안 운동한 총 일수"
+                    },
+                    "monthly_earnings": {
+                      "type": "integer",
+                      "example": 150,
+                      "description": "해당 달 동안 번 포인트"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (유효하지 않은 연도/월 입력)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid year or month format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 (토큰 없음 또는 유효하지 않음)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 인증이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/font-size": {
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "글씨 크기 수정",
+        "description": "사용자의 글씨 크기 설정을 수정합니다.",
+        "responses": {
+          "200": {
+            "description": "글씨 크기 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "글씨 크기가 성공적으로 변경되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "유효하지 않은 요청입니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "description": "수정할 사용자 ID"
+                  },
+                  "fontSize": {
+                    "type": "integer",
+                    "description": "수정할 글씨 크기 (1: 기본, 2: 크게, 3: 아주 크게)"
+                  }
+                },
+                "required": [
+                  "userId",
+                  "fontSize"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/profile/{userId}": {
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "사용자 정보 수정",
+        "description": "사용자의 프로필 정보를 수정합니다.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "수정할 사용자 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "사용자 정보 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 정보가 성공적으로 업데이트되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileImage": {
+                    "type": "string",
+                    "description": "프로필 이미지 URL",
+                    "nullable": true
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "사용자 이름",
+                    "nullable": true
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "MALE",
+                      "FEMALE"
+                    ],
+                    "description": "사용자 성별",
+                    "nullable": true
+                  },
+                  "height": {
+                    "type": "number",
+                    "description": "키 (cm)",
+                    "nullable": true
+                  },
+                  "weight": {
+                    "type": "number",
+                    "description": "몸무게 (kg)",
+                    "nullable": true
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "description": "전화번호",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "in": "header",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
