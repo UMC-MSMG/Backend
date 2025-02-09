@@ -22,6 +22,8 @@ import authRoutes from "./routes/auth.routes";
 import workoutRoutes from "./routes/workout.routes";
 import pointRoutes from "./routes/points.routes";
 import stepRoutes from "./routes/steps.routes";
+import settingsRoutes from "./routes/settings.routes";
+
 
 const app = express();
 const port = 3000;
@@ -70,6 +72,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/workouts", workoutRoutes); // Use the new workout routes
 app.use("/api/points", pointRoutes);
 app.use("/api/steps", stepRoutes);
+app.use("/api/settings", settingsRoutes);
+
 
 // 서버 실행
 app.listen(port, () => {
