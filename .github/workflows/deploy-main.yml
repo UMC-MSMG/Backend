@@ -41,11 +41,15 @@ jobs:
 
       - name: Install Node.js and TSX on EC2
         run: |
-          ssh Backend "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs"
-          ssh Backend "npm install -g tsx"
+          ssh -o ServerAliveInterval=60 Backend "until curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -; do echo 'Retrying...'; sleep 5; done"
+          ssh Backend "sudo apt-get install -y nodejs"
+          ssh Backend "npm install -g tsx || npm install -g tsx"
+          //ssh Backend "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs"
+          //ssh Backend "npm install -g tsx"
 
       - name: Copy Workspace
         run: |
+          ssh Backend "mkdir -p /home/ubuntu/app"
           scp -r ./* Backend:/home/ubuntu/app/
 
       - name: Install dependencies on EC2
@@ -54,6 +58,8 @@ jobs:
 
       - name: Start the application with PM2
         run: |
-          ssh Backend "pm2 delete umc-7th-app || true"
-          ssh Backend "pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
+          ssh Backend "$(npm bin -g)/pm2 delete umc-7th-app || true"
+          ssh Backend "$(npm bin -g)/pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
+          //ssh Backend "pm2 delete umc-7th-app || true"
+          //ssh Backend "pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
 
