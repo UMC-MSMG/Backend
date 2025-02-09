@@ -28,6 +28,7 @@
           "200": {
             "description": "OK"
           }
+          }
         }
       }
     },
@@ -530,7 +531,72 @@
         ],
         "responses": {
           "200": {
-            "description": "요약 정보 조회 성공",
+            "description": "걸음수 추가 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "steps": {
+                    "type": "integer"
+                  },
+                  "totalSteps": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "걸음수가 성공적으로 추가되었습니다."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "steps": {
+                  "type": "integer",
+                  "description": "추가할 걸음수"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/font-size/{userId}": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "글씨 크기 조회",
+        "description": "사용자의 현재 글씨 크기 설정을 조회합니다.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "조회할 사용자 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "글씨 크기 조회 성공",
             "content": {
               "application/json": {
                 "schema": {
@@ -611,7 +677,14 @@
                     "workout_level": {
                       "type": "string",
                       "example": "NORMAL"
-                    }
+                    },
+                    "userId": {
+                      "type": "integer",
+                      "description": "사용자 ID"
+                    },
+                    "fontSize": {
+                      "type": "integer",
+                      "description": "현재 글씨 크기 (1: 기본, 2: 크게, 3: 아주 크게)"
                   }
                 }
               }
@@ -619,6 +692,8 @@
           },
           "401": {
             "description": "인증 실패 (토큰 없음)",
+          "400": {
+            "description": "잘못된 요청",
             "content": {
               "application/json": {
                 "schema": {
