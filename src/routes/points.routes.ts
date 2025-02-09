@@ -9,6 +9,6 @@ const router = Router();
 
 router.get("/:userId", getUserPoint);
 router.put("/:userId/add", addUserPoint);
-router.put("/:userId/user", useUserPoint);
+router.put("/:userId/use", useUserPoint);
 
 export default router;

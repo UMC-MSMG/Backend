@@ -1,22 +1,28 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
   LogWorkoutRequest,
   LogWorkoutResponse,
   GetWorkoutsByCategoryResponse,
-  Workout,
+  WorkoutDetail,
 } from "../types/workout.types";
+import * as workoutRepository from "../repositories/workout.repository";
 
-export const getWorkoutsByCategory = (
+export const getWorkoutsByCategory = async (
   req: Request,
-  res: Response<GetWorkoutsByCategoryResponse>
+  res: Response<GetWorkoutsByCategoryResponse>,
+  next: NextFunction
 ) => {
-  const categoryId = parseInt(req.params.categoryId, 10);
-  const workouts: Workout[] = [
-    { exerciseId: 1, exerciseName: "스쿼트" },
-    { exerciseId: 2, exerciseName: "윗몸일으키기" },
-    { exerciseId: 3, exerciseName: "제자리뛰기" },
-  ];
-  res.json({ workouts });
+  try {
+    const exercises = await workoutRepository.getWorkoutsByCategory();
+    const formattedWorkouts: WorkoutDetail[] = exercises.map((exercise) => ({
+      id: Number(exercise.id),
+      name: exercise.name || "",
+    }));
+
+    res.json({ categories: formattedWorkouts });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const logWorkout = (
