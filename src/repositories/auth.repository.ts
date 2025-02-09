@@ -44,3 +44,12 @@ export const updateRefreshToken = async (id: number, refreshToken: string) => {
     throw new Error("리프레시 토큰 업데이트 실패");
   }
 };
+
+export const AuthRepository = {
+  // 존재하는 전화번호인지 확인
+  findPhoneNum: async (phoneNum: string) => {
+    return await prisma.user.findFirst({
+      where: { phoneNumber: phoneNum },
+    });
+  },
+};
