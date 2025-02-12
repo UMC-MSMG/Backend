@@ -33,15 +33,4 @@ export type ErrorResponse = {
       }
     | ErrorResponse;
   
-  export type GetUserProfileResponse =
-    | {
-        userId: number;
-        profileImage?: string;
-        name: string;
-        gender?: "MALE" | "FEMALE";
-        height?: number;
-        weight?: number;
-        phoneNumber?: string;
-      }
-    | ErrorResponse;
   
