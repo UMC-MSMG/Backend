@@ -91,4 +91,4 @@ jobs:
 
       - name: Restart systemd service
         run: |
-          ssh msmg-umc 'sudo systemctl status app -l'
+          ssh msmg-umc 'sudo systemctl restart app'
