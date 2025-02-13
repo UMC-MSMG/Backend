@@ -51,9 +51,9 @@ jobs:
 
       - name: Copy Workspace
         run: |
-          ssh ${{ secrets.EC2_HOST }} 'sudo mkdir -p /opt/app'
-          ssh ${{ secrets.EC2_HOST }} 'sudo chown ubuntu:ubuntu /opt/app'
-          scp -r ./[!.]* ${{ secrets.EC2_HOST }}:/opt/app
+          ssh msmg-umc 'sudo mkdir -p /opt/app'
+          ssh msmg-umc 'sudo chown ubuntu:ubuntu /opt/app'
+          scp -r ./[!.]* msmg-umc:/opt/app
 
       # - name: Install dependencies on EC2
       #   run: |
