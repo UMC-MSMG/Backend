@@ -34,7 +34,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
           cat >>~/.ssh/config <<END
-          Host Backend
+          Host msmg-umc
             HostName $EC2_HOST
             User ubuntu
             IdentityFile ~/.ssh/id_rsa
@@ -46,35 +46,39 @@ jobs:
 
       # - name: Install Node.js and TSX on EC2
       #   run: |
-      #     ssh Backend "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs"
-      #     ssh Backend "npm install -g tsx"
+      #     ssh msmg-umc "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs"
+      #     ssh msmg-umc "npm install -g tsx"
 
       - name: Copy Workspace
         run: |
-          ssh Backend 'sudo mkdir -p /opt/app'
-          ssh Backend 'sudo chown ubuntu:ubuntu /opt/app'
-          scp -r ./[!.]* Backend:/opt/app
+          ssh msmg-umc 'sudo mkdir -p /opt/app'
+          ssh msmg-umc 'sudo chown ubuntu:ubuntu /opt/app'
+          scp -r ./[!.]* msmg-umc:/opt/app
 
       # - name: Install dependencies on EC2
       #   run: |
-      #     ssh Backend "cd /home/ubuntu/app && npm ci"
+      #     ssh msmg-umc "cd /home/ubuntu/app && npm ci"
 
       # - name: Start the application with PM2
       #   run: |
-      #     ssh Backend "pm2 delete umc-7th-app || true"
-      #     ssh Backend "pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
+      #     ssh msmg-umc "pm2 delete umc-7th-app || true"
+      #     ssh msmg-umc "pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
 
       - name: Copy systemd service file
         run: |
-          ssh Backend '
+          ssh msmg-umc '
               echo "[Unit]
               Description=UMC 7th Project
               After=network.target
 
               [Service]
-              User=${USER}
+              User=ubuntu
               ExecStart=/usr/bin/npm run dev --prefix /opt/app/
               Restart=always
+              Environment=PATH=/usr/bin:/usr/bin:/bin
+              WorkingDirectory=/opt/app/
+
+
 
               [Install]
               WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service
@@ -82,9 +86,10 @@ jobs:
 
       - name: Enable systemd service
         run: |
-          ssh Backend 'sudo systemctl daemon-reload'
-          ssh Backend 'sudo systemctl enable app'
+          ssh msmg-umc 'sudo systemctl daemon-reload'
+          ssh msmg-umc 'sudo systemctl enable app'
 
       - name: Restart systemd service
         run: |
-          ssh Backend 'sudo systemctl restart app'
+          ssh msmg-umc 'sudo systemctl restart app'
+          ssh msmg-umc 'sudo systemctl status app -l'
