@@ -19,6 +19,7 @@ const options = {
     },
   ],
   servers: [
+    { url: "http://43.202.104.127:3000/" },
     {
       url: "http://localhost:3000",
     },
