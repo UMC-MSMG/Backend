@@ -70,11 +70,12 @@ jobs:
         run: |
           ssh msmg-umc 'cd /opt/app; npm ci'
           ssh msmg-umc 'cd /opt/app; npm exec prisma generate'
+          ssh msmg-umc 'cd /opt/app; node swagger.js'
 
       - name: Apply prisma migrations
         if: steps.paths-filter.outputs.prisma == 'true'
         run: |
-          ssh playground-umc-7th 'cd /opt/app; npm exec prisma migrate deploy'
+          ssh msmg-umc 'cd /opt/app; npm exec prisma migrate deploy'
 
       # - name: Start the application with PM2
       #   run: |
