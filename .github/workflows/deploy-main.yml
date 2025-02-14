@@ -68,7 +68,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ssh msmg-umc 'cd /opt/app; npm install'
+          ssh msmg-umc 'cd /opt/app; npm ci'
           ssh msmg-umc 'cd /opt/app; npm exec prisma generate'
 
       - name: Apply prisma migrations
