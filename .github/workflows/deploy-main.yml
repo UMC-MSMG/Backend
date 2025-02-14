@@ -3,22 +3,20 @@ name: deploy-main
 on:
   push:
     branches:
-      - main # main 브랜치에 새로운 커밋이 올라왔을 떄 실행되도록 합니다
+      - main
       - hotfix/fix-cicd-pipe
-  workflow_dispatch: # 필요한 경우 수동으로 실행할 수도 있도록 합니다
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest # CI/CD 파이프라인이 실행될 운영체제 환경을 지정합니다
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - uses: actions/setup-node@v4 #워크북에는 없음
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm ci
-      # Uncomment if tests are required
-      # - run: npm test
 
   deploy:
     needs: build
@@ -51,20 +49,11 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
 
-      # - name: Install Node.js and TSX on EC2
-      #   run: |
-      #     ssh msmg-umc "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs"
-      #     ssh msmg-umc "npm install -g tsx"
-
       - name: Copy Workspace
         run: |
           ssh msmg-umc 'sudo mkdir -p /opt/app'
           ssh msmg-umc 'sudo chown ubuntu:ubuntu /opt/app'
           scp -r ./[!.]* msmg-umc:/opt/app
-
-      # - name: Install dependencies on EC2
-      #   run: |
-      #     ssh msmg-umc "cd /home/ubuntu/app && npm ci"
 
       - name: Install dependencies
         run: |
@@ -77,32 +66,10 @@ jobs:
         run: |
           ssh msmg-umc 'cd /opt/app; npm exec prisma migrate deploy'
 
-      # - name: Start the application with PM2
-      #   run: |
-      #     ssh msmg-umc "pm2 delete umc-7th-app || true"
-      #     ssh msmg-umc "pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
-
-      - name: Copy systemd service file
+      - name: Start or Restart PM2 Process
         run: |
-          ssh msmg-umc '
-              echo "[Unit]
-              Description=UMC 7th Project
-              After=network.target
-
-              [Service]
-              User=ubuntu
-              ExecStart=/usr/bin/npm run start --prefix /opt/app/
-              Restart=always
-
-              [Install]
-              WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service
-            '
-
-      - name: Enable systemd service
-        run: |
-          ssh msmg-umc 'sudo systemctl daemon-reload'
-          ssh msmg-umc 'sudo systemctl enable app'
-
-      - name: Restart systemd service
-        run: |
-          ssh msmg-umc 'sudo systemctl restart app'
+          ssh msmg-umc "
+            pm2 delete umc-7th-app || true
+            pm2 start /opt/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx
+            pm2 save
+          "
