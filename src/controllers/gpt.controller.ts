@@ -4,6 +4,9 @@
 import { Request, Response } from "express";
 import { gptService } from "../services/gpt.service";
 import { calculateBMI } from "../utils/bmi.utils";
+import OpenAI from "openai";
+
+const openai = new OpenAI();
 
 export const gptController = {
   /**

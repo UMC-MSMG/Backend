@@ -2,7 +2,6 @@
 // chatgpt api 요청 서비스
 
 import axios from "axios";
-import express from "express";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/completions";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
