@@ -25,6 +25,18 @@
     {
       "name": "Points",
       "description": "포인트, 상점 관련 API"
+    },
+    {
+      "name": "Steps",
+      "description": "걸음수 관련 API"
+    },
+    {
+      "name": "Settings",
+      "description": "설정 관련 API"
+    },
+    {
+      "name": "OpenAI",
+      "description": "챗지피티 응답 관련 API"
     }
   ],
   "paths": {
@@ -1246,7 +1258,7 @@
     "/api/gpt/generate-questions": {
       "post": {
         "tags": [
-          "ChatGPT"
+          "OpenAI"
         ],
         "summary": "BMI 계산 및 운동 관련 질문 생성",
         "description": "사용자의 키와 몸무게를 입력하면 BMI를 계산하고, 비만도를 평가하여 운동 관련 질문을 생성합니다.",
@@ -1332,7 +1344,7 @@
     "/api/gpt/determine-level": {
       "post": {
         "tags": [
-          "ChatGPT"
+          "OpenAI"
         ],
         "summary": "사용자의 응답을 기반으로 운동 난이도 결정",
         "description": "사용자가 응답한 운동 관련 질문의 답변을 기반으로 운동 난이도를 분석합니다.",
@@ -1385,6 +1397,60 @@
                 },
                 "required": [
                   "responses"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/gpt/transcribe-audio": {
+      "post": {
+        "tags": [
+          "OpenAI"
+        ],
+        "summary": "사용자의 음성을 텍스트로 변환",
+        "description": "Whisper API를 사용하여 음성을 텍스트로 변환합니다.",
+        "responses": {
+          "200": {
+            "description": "음성 변환 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "example": "하루에 30분 정도 걷습니다.",
+                      "description": "변환된 텍스트"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "audio": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "업로드할 음성 파일"
+                  }
+                },
+                "required": [
+                  "audio"
                 ]
               }
             }

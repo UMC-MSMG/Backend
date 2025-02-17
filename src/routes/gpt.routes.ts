@@ -1,8 +1,10 @@
 // gpt.routes.ts
 import express from "express";
+import multer from "multer";
 import { gptController } from "../controllers/gpt.controller";
 
 const router = express.Router();
+const upload = multer({ dest: "uploads/" }); // 파일 업로드를 위한 multer 설정
 
 /**
  * BMI 계산 및 운동 관련 질문 생성: POST /api/gpt/generate-questions
@@ -10,7 +12,7 @@ const router = express.Router();
 router.post(
     "/generate-questions",
     /*
-    #swagger.tags = ['ChatGPT']
+    #swagger.tags = ['OpenAI']
     #swagger.summary = 'BMI 계산 및 운동 관련 질문 생성'
     #swagger.description = '사용자의 키와 몸무게를 입력하면 BMI를 계산하고, 비만도를 평가하여 운동 관련 질문을 생성합니다.'
     #swagger.requestBody = {
@@ -70,7 +72,7 @@ router.post(
 router.post(
     "/determine-level",
     /*
-    #swagger.tags = ['ChatGPT']
+    #swagger.tags = ['OpenAI']
     #swagger.summary = '사용자의 응답을 기반으로 운동 난이도 결정'
     #swagger.description = '사용자가 응답한 운동 관련 질문의 답변을 기반으로 운동 난이도를 분석합니다.'
     #swagger.requestBody = {
@@ -115,4 +117,44 @@ router.post(
     gptController.determineFitnessLevel
 );
 
+/**
+ * (음성 파일 변환) 사용자 음성을 텍스트로 변환 : POST /api/gpt/transcribe-audio 
+ */
+router.post(
+    "/transcribe-audio",
+    upload.single("audio"),
+    /*
+    #swagger.tags = ['OpenAI']
+    #swagger.summary = '사용자의 음성을 텍스트로 변환'
+    #swagger.description = 'Whisper API를 사용하여 음성을 텍스트로 변환합니다.'
+    #swagger.requestBody = {
+        required: true,
+        content: {
+            "multipart/form-data": {
+                schema: {
+                    type: "object",
+                    properties: {
+                        audio: { type: "string", format: "binary", description: "업로드할 음성 파일" }
+                    },
+                    required: ["audio"]
+                }
+            }
+        }
+    }
+    #swagger.responses[200] = {
+        description: "음성 변환 성공",
+        content: {
+            "application/json": {
+                schema: {
+                    type: "object",
+                    properties: {
+                        text: { type: "string", example: "하루에 30분 정도 걷습니다.", description: "변환된 텍스트" }
+                    }
+                }
+            }
+        }
+    }
+    */
+    gptController.transcribeAudio
+);
 export default router;

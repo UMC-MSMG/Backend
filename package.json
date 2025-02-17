@@ -9,7 +9,7 @@
     "build": "tsc -p .",
     "dev": "nodemon -e js,json,ts,prisma --exec \"prisma generate && tsx src/index.ts\"",
     "open-api": "openapi-generator-cli -i -c ./openapi.json",
-    "swagger-typescript-api": "swagger-typescript-api -p http://localhost:3000/openapi.json -r -o ./models --modular -d --extract-request-body --extract-response-body --extract-response-error --axios"
+    "swagger-typescript-api": "node -e \"const url = process.env.NODE_ENV === 'production' ? `http://${process.env.AWS_PUBLIC_IP}:3000/openapi.json` : 'http://localhost:3000/openapi.json'; require('child_process').execSync(`swagger-typescript-api -p ${url} -r -o ./models --modular -d --extract-request-body --extract-response-body --extract-response-error --axios`, { stdio: 'inherit' });\""
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +25,7 @@
     "express-session": "^1.18.1",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "openai": "^4.85.1",
     "passport": "^0.7.0",
     "passport-kakao": "^1.0.1",
@@ -40,6 +41,7 @@
     "@types/express-session": "^1.18.1",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.8",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.10.7",
     "@types/passport": "^1.0.17",
     "@types/passport-kakao": "^1.0.3",
