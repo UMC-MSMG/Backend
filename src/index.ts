@@ -24,6 +24,7 @@ import pointRoutes from "./routes/points.routes";
 import stepRoutes from "./routes/steps.routes";
 import historyRoutes from "./routes/history.routes";
 import settingsRoutes from "./routes/settings.routes";
+import gptRoutes from "./routes/gpt.routes";
 
 const app = express();
 const port = 3000;
@@ -74,6 +75,7 @@ app.use("/api/points", pointRoutes);
 app.use("/api/steps", stepRoutes);
 app.use("/api/histories", historyRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/gpt", gptRoutes);
 
 // 서버 실행
 app.listen(port, () => {

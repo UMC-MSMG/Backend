@@ -1,4 +1,4 @@
-// utils/bmiCalculator.ts
+// bmi.utils.ts
 // BMI 계산 함수
 
 export const calculateBMI = (height: number, weight: number): { bmi: number; category: string } => {
@@ -13,4 +13,5 @@ export const calculateBMI = (height: number, weight: number): { bmi: number; cat
 
   return { bmi: parseFloat(bmi.toFixed(2)), category };
 };
+
 

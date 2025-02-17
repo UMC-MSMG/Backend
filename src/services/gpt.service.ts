@@ -2,12 +2,13 @@
 // chatgpt api 요청 서비스
 
 import axios from "axios";
+import express from "express";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/completions";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export const gptService = {
-  /** ChatGPT API를 이용해 운동 관련 질문 생성 */
+  /** ✅ ChatGPT API를 이용해 운동 관련 질문 생성 */
   generateQuestions: async (bmiCategory: string, healthIssues: string[]): Promise<string[]> => {
     try {
       const prompt = `사용자의 비만도는 ${bmiCategory}이고, 건강 문제로 ${healthIssues.join(", ")}가 있습니다. 
@@ -33,14 +34,17 @@ export const gptService = {
         throw new Error("GPT 응답이 비어 있습니다.");
       }
 
-      return response.data.choices[0].text.trim().split("\n").filter(q => q);
+      return response.data.choices[0].text
+        .trim()
+        .split("\n")
+        .filter((q: string) => q.trim().length > 0);
     } catch (error) {
       console.error("GPT 질문 생성 오류:", error);
       throw new Error("ChatGPT API 요청 실패");
     }
   },
 
-  /** 사용자의 답변을 기반으로 운동 난이도를 결정 */
+  /** ✅ 운동 난이도를 결정하는 메서드 */
   determineFitnessLevel: async (responses: string[]): Promise<string> => {
     try {
       const prompt = `다음은 사용자의 건강 관련 답변입니다: ${responses.join(", ")}.
@@ -71,5 +75,5 @@ export const gptService = {
       console.error("GPT 운동 난이도 결정 오류:", error);
       throw new Error("ChatGPT API 요청 실패");
     }
-  },
+  }
 };
