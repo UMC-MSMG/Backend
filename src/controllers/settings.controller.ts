@@ -1,3 +1,5 @@
+//settings.controller.ts
+
 import { RequestHandler } from "express";
 import { prisma } from "../db.config";
 import {
@@ -14,7 +16,8 @@ import {
  */
 export const updateFontSize: RequestHandler<{}, UpdateFontSizeResponse, UpdateFontSizeRequest> = async (req, res) => {
   try {
-    const { userId, fontSize } = req.body;
+    const userId = req.user?.id; // JWT에서 userId 가져오기
+    const { fontSize } = req.body;
 
     if (!userId || ![1, 2, 3].includes(fontSize)) {
       res.status(400).json({ error: "유효하지 않은 요청입니다.", statusCode: 400 });
@@ -34,14 +37,12 @@ export const updateFontSize: RequestHandler<{}, UpdateFontSizeResponse, UpdateFo
 };
 
 /**
- * 내 정보 수정
+ * 사용자 정보 수정
  */
-export const updateUserProfile: RequestHandler<{}, UpdateUserProfileResponse, UpdateUserProfileRequest> = async (
-  req,
-  res
-) => {
+export const updateUserProfile: RequestHandler<{}, UpdateUserProfileResponse, UpdateUserProfileRequest> = async (req,res) => {
   try {
-    const { userId, profileImage, name, gender, height, weight, phoneNumber } = req.body;
+    const userId = req.user?.id; // JWT에서 userId 가져오기
+    const { profileImage, name, gender, height, weight, phoneNumber } = req.body;
 
     if (!userId) {
       res.status(400).json({ error: "userId가 필요합니다.", statusCode: 400 });
@@ -58,19 +59,19 @@ export const updateUserProfile: RequestHandler<{}, UpdateUserProfileResponse, Up
         return;
     }
 
-    // 빈 문자열("")이나 null 값 필터링
+    // 빈 값 필터링 함수
     const isValidValue = (value: any) => value !== undefined && value !== null && value !== "";
 
 
-    // 요청 값이 null, 빈 문자열("") 또는 undefined일 경우 기존 값을 유지
+    // 요청 값이 비어 있으면 기존 값 유지
     const updateData = {
-        image: isValidValue(profileImage) ? profileImage : existingUser.image,
-        name: isValidValue(name) ? name : existingUser.name,
-        gender: isValidValue(gender) ? gender : existingUser.gender,
-        height: isValidValue(height) ? height : existingUser.height,
-        weight: isValidValue(weight) ? weight : existingUser.weight,
-        phoneNumber: isValidValue(phoneNumber) ? phoneNumber : existingUser.phoneNumber,
-    }
+      image: isValidValue(profileImage) ? profileImage : existingUser.image,
+      name: isValidValue(name) ? name : existingUser.name,
+      gender: isValidValue(gender) ? gender : existingUser.gender,
+      height: isValidValue(height) ? height : existingUser.height,
+      weight: isValidValue(weight) ? weight : existingUser.weight,
+      phoneNumber: isValidValue(phoneNumber) ? phoneNumber : existingUser.phoneNumber,
+  }
   
     // 사용자 정보 업데이트
     await prisma.user.update({

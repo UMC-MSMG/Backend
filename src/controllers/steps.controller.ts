@@ -6,23 +6,23 @@ import {
   GetUserStepsResponse,
   AddUserStepsRequest,
   AddUserStepsResponse,
-  ErrorResponse,
 } from "../types/steps.types";
+
 
 // 날짜별 걸음수 조회
 export const getUserSteps: RequestHandler<
-  { userId: string },
+  {},
   GetUserStepsResponse,
   {},
   { date?: string }
 > = async (req, res) => {
   try {
-    const userId = parseInt(req.params.userId, 10);
+    const userId = req.user?.id; // JWT에서 가져온 userId
     const dateQuery = req.query.date;
 
-    if (isNaN(userId) || !dateQuery) {
+    if (!userId || !dateQuery) {
       res.status(400).json({
-        error: "유효하지 않은 요청입니다. userId와 date를 확인하세요.",
+        error: "유효하지 않은 요청입니다. 날짜를 확인하세요.",
         statusCode: 400,
       });
       return;
@@ -36,10 +36,7 @@ export const getUserSteps: RequestHandler<
       return;
     }
 
-    //const parsedDate = new Date(dateQuery);
-    const parsedDate = new Date(dateQuery).toISOString(); // UTC 기준으로 변환
-
-    //parsedDate.setHours(0, 0, 0, 0);
+    const parsedDate = new Date(dateQuery).toISOString(); // UTC 변환
 
     const userSteps = await prisma.stepCount.findFirst({
       where: {
@@ -74,28 +71,17 @@ export const getUserSteps: RequestHandler<
 
 // 날짜별 걸음수 추가 (업데이트/등록)
 export const addUserSteps: RequestHandler<
-  { userId: string },
+  {},
   AddUserStepsResponse,
   AddUserStepsRequest
 > = async (req, res) => {
   try {
-    const userId = parseInt(req.params.userId, 10);
+    const userId = req.user?.id; // JWT에서 가져온 userId
     const { steps, date } = req.body;
 
-    if (isNaN(userId) || steps == null || !date) {
+    if (!userId || steps == null || !date) {
       res.status(400).json({
-        error:
-          "유효하지 않은 요청입니다. userId, steps, 그리고 date를 확인하세요.",
-
-        statusCode: 400,
-      });
-      return;
-    }
-
-    const stepCount = Number(steps);
-    if (isNaN(stepCount)) {
-      res.status(400).json({
-        error: "steps 값이 숫자가 아닙니다.",
+        error: "유효하지 않은 요청입니다. steps 및 date를 확인하세요.",
         statusCode: 400,
       });
       return;
@@ -109,31 +95,25 @@ export const addUserSteps: RequestHandler<
       return;
     }
 
-    //const parsedDate = new Date(date);
-    //parsedDate.setHours(0, 0, 0, 0);
     const parsedDate = new Date(date).toISOString(); // UTC 기준으로 변환
-
 
     const userSteps = await prisma.stepCount.upsert({
       where: {
         userId_date: { userId: userId, date: parsedDate },
       },
       update: {
-        steps: { increment: stepCount },
+        steps: { increment: steps },
       },
       create: {
         userId: userId,
         date: parsedDate,
-        steps: stepCount,
+        steps: steps,
       },
     });
 
-    console.log(
-      `사용자 ${userId}의 ${date} 날짜에 걸음수 ${stepCount} 추가됨. 총 걸음수: ${userSteps.steps}`
-    );
     res.json({
       userId,
-      steps: stepCount,
+      steps,
       totalSteps: userSteps.steps,
       message: "걸음수가 성공적으로 추가되었습니다.",
     });
