@@ -22,30 +22,65 @@ export class AuthController {
       #swagger.tags = ['Auth']
       #swagger.summary = '카카오 로그인 콜백 API'
       #swagger.description = '카카오 로그인 성공 시 JWT 반환'
+
       #swagger.security = [{ "bearerAuth": [] }]
-      #swagger.responses[200] = {description: "카카오 로그인 성공",
-        content: {
-            "application/json": {
-                example: {
-                    "message": "카카오 로그인 성공",
-                    "user": {
-                        "id": 1,
-                        "name": "홍길동",
-                        "image": "https://example.com/profile.jpg"
-                    },
-                    "accessToken": "eyJhbGciOiJIUz...",
-                    "refreshToken": "eyJhbGciOiJIUz..."
-                }
-            }
-        }
+
+      #swagger.responses[200] = {
+          description: "카카오 로그인 성공",
+          content: {
+              "application/json": {
+                  schema: {
+                      type: "object",
+                      properties: {
+                          message: { type: "string", example: "카카오 로그인 성공" },
+                          user: {
+                              type: "object",
+                              properties: {
+                                  id: { type: "number", example: 1 },
+                                  name: { type: "string", example: "홍길동" },
+                                  image: { type: "string", example: "https://example.com/profile.jpg" }
+                              }
+                          },
+                          newUser: { type: "boolean", example: false },
+                          accessToken: { type: "string", example: "eyJhbGciOiJIUz..." },
+                          refreshToken: { type: "string", example: "eyJhbGciOiJIUz..." }
+                      }
+                  }
+              }
+          }
       }
+
       #swagger.responses[401] = {
-          description: "로그인 실패"
+          description: "로그인 실패",
+          content: {
+              "application/json": {
+                  schema: {
+                      type: "object",
+                      properties: {
+                          success: { type: "boolean", example: false },
+                          message: { type: "string", example: "로그인 실패" }
+                      }
+                  }
+              }
+          }
       }
+
       #swagger.responses[500] = {
-          description: "서버 오류"
+          description: "서버 오류",
+          content: {
+              "application/json": {
+                  schema: {
+                      type: "object",
+                      properties: {
+                          success: { type: "boolean", example: false },
+                          message: { type: "string", example: "서버 오류가 발생했습니다." }
+                      }
+                  }
+              }
+          }
       }
-*/
+    */
+
     try {
       if (!req.user) {
         res.status(401).json({ message: "카카오 로그인 실패" });

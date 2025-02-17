@@ -16,7 +16,7 @@ export class AuthService {
       if (!user) {
         throw new Error("카카오 로그인 실패");
       }
-      console.log(user);
+      console.log("카카오 유저", user);
       console.log("id: ", user.user.id);
 
       return {
@@ -26,6 +26,7 @@ export class AuthService {
           name: user.user.name,
           image: user.user.image,
         },
+        newUser: user.newUser,
         accessToken: user.accessToken,
         refreshToken: user.refreshToken,
       };
