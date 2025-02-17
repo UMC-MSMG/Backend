@@ -7,6 +7,9 @@
   },
   "servers": [
     {
+      "url": "http://43.202.104.127:3000/"
+    },
+    {
       "url": "http://localhost:3000"
     }
   ],
@@ -17,6 +20,10 @@
     },
     {
       "name": "Users",
+      "description": "유저 관련 API"
+    },
+    {
+      "name": "Points",
       "description": "유저 관련 API"
     }
   ],
@@ -216,7 +223,7 @@
           "Auth"
         ],
         "summary": "[ 로그인 ] 전화번호 인증 코드 전송",
-        "description": "로그인에 필요한 전화번호 인증 코드 전송 API. 근데 이 api 사용할때마다 50원씩 부과됩니다... 또 하루 최대 50회 제한 있어요.",
+        "description": "로그인에 필요한 전화번호 인증 코드 전송 API. 근데 이 api 사용할때마다 20원씩 부과됩니다... 또 하루 최대 50회 제한 있어요.",
         "responses": {
           "200": {
             "description": "인증 코드 전송 성공",
@@ -579,14 +586,17 @@
         }
       }
     },
-    "/api/points/{userId}": {
+    "/api/points/my-points": {
       "get": {
-        "description": "",
+        "tags": [
+          "Points"
+        ],
+        "summary": "사용자 포인트 조회",
+        "description": "현재 로그인한 사용자의 포인트를 조회합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -594,50 +604,184 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "포인트 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "userId": 1,
+                  "point": 1500,
+                  "message": "포인트 조회 성공"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "사용자 인증 필요"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/points/add": {
+      "patch": {
+        "tags": [
+          "Points"
+        ],
+        "summary": "사용자 포인트 추가",
+        "description": "현재 로그인한 사용자에게 포인트를 추가합니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "포인트 추가 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "number",
+                      "example": "1"
+                    },
+                    "updated_point": {
+                      "type": "number",
+                      "example": "200"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "포인트 추가 성공"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "사용자 인증 필요"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
           }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "type": "number",
+                    "example": "50"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
-    "/api/points/{userId}/add": {
-      "put": {
-        "description": "",
+    "/api/points/buy-product": {
+      "patch": {
+        "tags": [
+          "Points"
+        ],
+        "summary": "상품 구매",
+        "description": "현재 로그인한 사용자가 포인트를 사용하여 상품을 구매합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
             }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/points/{userId}/use": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+          "200": {
+            "description": "상품 구매 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product_id": {
+                      "type": "number",
+                      "example": "1"
+                    },
+                    "updated_point": {
+                      "type": "number",
+                      "example": "200"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "상품 구매 성공"
+                    }
+                  }
+                }
+              }
             }
+          },
+          "400": {
+            "description": "잘못된 요청 (상품 ID 누락)"
+          },
+          "401": {
+            "description": "사용자 인증 필요"
+          },
+          "403": {
+            "description": "포인트 부족"
+          },
+          "404": {
+            "description": "상품이 존재하지 않음"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
           }
         ],
-        "responses": {
-          "default": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": {
+                    "type": "number",
+                    "example": "1"
+                  }
+                }
+              }
+            }
           }
         }
       }

@@ -1,14 +1,11 @@
-import { Router } from "express";
-import {
-  getUserPoint,
-  addUserPoint,
-  useUserPoint,
-} from "../controllers/points.controller";
+import express from "express";
+import { PointsController } from "../controllers/points.controller";
+import { verifyToken } from "../middleware/auth.middleware";
 
-const router = Router();
+const router = express.Router();
 
-router.get("/:userId", getUserPoint);
-router.put("/:userId/add", addUserPoint);
-router.put("/:userId/use", useUserPoint);
+router.get("/my-points", verifyToken, PointsController.getUserPoints);
+router.patch("/add", verifyToken, PointsController.addUserPoints);
+router.patch("/buy-product", verifyToken, PointsController.buyProduct);
 
 export default router;

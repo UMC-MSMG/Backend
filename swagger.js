@@ -17,8 +17,15 @@ const options = {
       name: "Users",
       description: "유저 관련 API",
     },
+    {
+      name: "Points",
+      description: "포인트, 상점 관련 API",
+    },
   ],
   servers: [
+    {
+      url: "http://43.202.104.127:3000/",
+    },
     {
       url: "http://localhost:3000",
     },

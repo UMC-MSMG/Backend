@@ -11,5 +11,4 @@ router.patch("/signup-info", verifyToken, userController.updateSignupInfo);
 // router.get("/info/:id", userController.getUserInfo);
 // router.put("/users/:userId", userController.updateUser);
 
-
 export default router;

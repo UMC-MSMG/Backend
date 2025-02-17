@@ -3,7 +3,6 @@ import { SignupRequest, UserInfoResponse } from "../types/user.types";
 import { SignupInfoDto } from "../dtos/user.dto";
 import { userService } from "../services/user.service";
 
-
 export const userController = {
   updateSignupInfo: async (req: Request, res: Response): Promise<void> => {
     /*
@@ -130,16 +129,16 @@ export const updateUser = async (
   next: NextFunction
 ) => {};
 
-// 모든 회원 목록 조회 컨트롤러 추가
-export const getAllUsers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const users = await userRepository.getAllUsers();
-    res.json(users);
-  } catch (error) {
-    next(error);
-  }
-};
+// // 모든 회원 목록 조회 컨트롤러 추가
+// export const getAllUsers = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const users = await userRepository.getAllUsers();
+//     res.json(users);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
