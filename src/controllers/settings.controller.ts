@@ -7,8 +7,12 @@ import {
   UpdateFontSizeResponse,
   UpdateUserProfileRequest,
   UpdateUserProfileResponse,
-  ErrorResponse,
+  UpdateMedicationRequest,
+  UpdateMedicationResponse,
+  UpdateWorkoutLevelRequest,
+  UpdateWorkoutLevelResponse,
 } from "../types/settings.types";
+import { Day, WorkoutLevel } from "@prisma/client"; // Prisma Enum 가져옴
 
 
 /**
@@ -82,6 +86,82 @@ export const updateUserProfile: RequestHandler<{}, UpdateUserProfileResponse, Up
     res.json({ message: "사용자 정보가 성공적으로 업데이트되었습니다." });
   } catch (error) {
     console.error("사용자 정보 수정 오류:", error);
+    res.status(500).json({ error: "서버 오류가 발생했습니다.", statusCode: 500 });
+  }
+};
+
+/**
+ * 복용 약물 정보 수정
+ */
+export const updateMedications: RequestHandler<{},UpdateMedicationResponse,UpdateMedicationRequest> = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const { medications } = req.body;
+
+    if (!userId || !medications) {
+      res.status(400).json({ error: "유효하지 않은 요청입니다.", statusCode: 400 });
+      return;
+    }
+
+    await prisma.medication.deleteMany({ where: { userId } });
+
+    await prisma.$transaction(
+      medications.map((med) =>
+        prisma.medication.create({
+          data: {
+            userId,
+            medName: med.medName,
+            description: med.description || "",
+            MedicationDay: {
+              create: med.medicationDays.map((day) => ({
+                day: day as Day, // Prisma Enum으로 변환
+              })),
+            },
+            MedicationTime: {
+              create: med.medicationTimes.map((time) => ({
+                time: new Date(`1970-01-01T${time}:00Z`),
+              })),
+            },
+          },
+        })
+      )
+    );
+
+    res.json({ message: "약물 정보가 성공적으로 업데이트되었습니다." });
+  } catch (error) {
+    console.error("약물 정보 수정 오류:", error);
+    res.status(500).json({ error: "서버 오류가 발생했습니다.", statusCode: 500 });
+  }
+};
+
+/**
+ * 운동 난이도 수정
+ */
+export const updateWorkoutLevel: RequestHandler<{},UpdateWorkoutLevelResponse,UpdateWorkoutLevelRequest> = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const { workoutLevel } = req.body;
+
+    // Prisma Enum 값(EASY, NORMAL, HARD)으로 변환
+    const workoutLevelMapping: Record<string, WorkoutLevel> = {
+      LOW: "EASY",
+      MEDIUM: "NORMAL",
+      HIGH: "HARD",
+    };
+
+    if (!userId || !workoutLevelMapping[workoutLevel]) {
+      res.status(400).json({ error: "유효하지 않은 요청입니다.", statusCode: 400 });
+      return;
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { workoutLevel: workoutLevelMapping[workoutLevel] }, // Prisma Enum 변환
+    });
+
+    res.json({ message: "운동 난이도가 성공적으로 업데이트되었습니다." });
+  } catch (error) {
+    console.error("운동 난이도 수정 오류:", error);
     res.status(500).json({ error: "서버 오류가 발생했습니다.", statusCode: 500 });
   }
 };

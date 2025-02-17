@@ -55,9 +55,12 @@ router.put(
         content: {
             "application/json": {
                 schema: {
-                    steps: { type: "integer", description: "추가할 걸음수" },
-                    date: { type: "string", format: "date", description: "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)" }
-                }
+                  type: "object",
+                  properties: {
+                      steps: { type: "integer", example: 5000, description: "추가할 걸음수" },
+                      date: { type: "string", format: "date", example: "2025-02-18", description: "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)" }
+                  },
+                  required: ["steps", "date"]
             }
         }
     }

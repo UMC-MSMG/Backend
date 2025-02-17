@@ -45,3 +45,27 @@ export type ErrorResponse = {
       }
     | ErrorResponse;
   
+  export type UpdateMedicationRequest = {
+  medications: {
+    medName: string;
+    description?: string;
+    medicationDays: ("MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN")[];
+    medicationTimes: string[]; // ["08:00", "20:00"]
+  }[];
+};
+
+export type UpdateMedicationResponse =
+  | {
+      message: string;
+    }
+  | ErrorResponse;
+
+export type UpdateWorkoutLevelRequest = {
+  workoutLevel: "LOW" | "MEDIUM" | "HIGH";
+};
+
+export type UpdateWorkoutLevelResponse =
+  | {
+      message: string;
+    }
+  | ErrorResponse;

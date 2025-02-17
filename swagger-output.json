@@ -596,48 +596,21 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "date",
-            "in": "query",
-            "required": true,
-            "format": "date",
-            "description": "조회할 날짜 (YYYY-MM-DD 형식)",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "걸음수 조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "userId": {
-                    "type": "integer"
-                  },
-                  "steps": {
-                    "type": "integer"
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "걸음수 조회 성공"
-                  }
-                }
-              }
-            }
-          },
           "401": {
             "description": "Unauthorized"
           },
           "403": {
             "description": "Forbidden"
-          },
-          "404": {
-            "description": "해당 날짜의 걸음수 데이터가 없음"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/steps/add": {
@@ -657,31 +630,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "걸음수 추가 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "userId": {
-                    "type": "integer"
-                  },
-                  "steps": {
-                    "type": "integer"
-                  },
-                  "totalSteps": {
-                    "type": "integer"
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "걸음수가 성공적으로 추가되었습니다."
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "잘못된 요청"
-          },
           "401": {
             "description": "Unauthorized"
           },
@@ -689,24 +637,11 @@
             "description": "Forbidden"
           }
         },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "steps": {
-                  "type": "integer",
-                  "description": "추가할 걸음수"
-                },
-                "date": {
-                  "type": "string",
-                  "format": "date",
-                  "description": "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)"
-                }
-              }
-            }
+        "security": [
+          {
+            "bearerAuth": []
           }
-        }
+        ]
       }
     },
     "/api/histories/summary": {
@@ -1018,6 +953,68 @@
         ],
         "summary": "사용자 정보 수정",
         "description": "사용자의 프로필 정보를 수정합니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/medications": {
+      "patch": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "복용 약물 정보 수정",
+        "description": "사용자가 복용 중인 약물을 추가, 수정, 삭제할 수 있습니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/workout-level": {
+      "patch": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "운동 난이도 수정",
+        "description": "사용자가 자신의 운동 난이도를 설정합니다. (상, 중, 하)",
         "parameters": [
           {
             "name": "authorization",
