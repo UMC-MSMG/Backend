@@ -35,6 +35,7 @@
           "200": {
             "description": "OK"
           }
+          }
         }
       }
     },
@@ -791,56 +792,38 @@
         "tags": [
           "Steps"
         ],
+    "/api/steps/": {
+      "get": {
+        "tags": [
+          "Steps"
+        ],
         "summary": "사용자 걸음수 조회",
         "description": "특정 날짜에 대한 사용자의 걸음수를 조회합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "조회할 사용자 ID"
-          },
-          {
-            "name": "date",
-            "in": "query",
-            "required": true,
-            "format": "date",
-            "description": "조회할 날짜 (YYYY-MM-DD 형식)",
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "걸음수 조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "userId": {
-                    "type": "integer"
-                  },
-                  "steps": {
-                    "type": "integer"
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "걸음수 조회 성공"
-                  }
-                }
-              }
-            }
+          "401": {
+            "description": "Unauthorized"
           },
-          "404": {
-            "description": "해당 날짜의 걸음수 데이터가 없음"
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
-    "/api/steps/{userId}/add": {
+    "/api/steps/add": {
       "put": {
         "tags": [
           "Steps"
@@ -849,60 +832,26 @@
         "description": "특정 날짜의 사용자 걸음수를 추가(업데이트)합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
-            },
-            "description": "걸음수를 추가할 사용자 ID"
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "걸음수 추가 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "userId": {
-                    "type": "integer"
-                  },
-                  "steps": {
-                    "type": "integer"
-                  },
-                  "totalSteps": {
-                    "type": "integer"
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "걸음수가 성공적으로 추가되었습니다."
-                  }
-                }
-              }
-            }
+          "401": {
+            "description": "Unauthorized"
           },
-          "400": {
-            "description": "잘못된 요청"
+          "403": {
+            "description": "Forbidden"
           }
         },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "steps": {
-                  "type": "integer",
-                  "description": "추가할 걸음수"
-                },
-                "date": {
-                  "type": "string",
-                  "format": "date",
-                  "description": "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)"
-                }
-              }
-            }
+        "security": [
+          {
+            "bearerAuth": []
           }
-        }
+        ]
       }
     },
     "/api/histories/summary": {
@@ -1183,62 +1132,21 @@
         ],
         "summary": "글씨 크기 수정",
         "description": "사용자의 글씨 크기 설정을 수정합니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "200": {
-            "description": "글씨 크기 수정 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "글씨 크기가 성공적으로 변경되었습니다."
-                    }
-                  }
-                }
-              }
-            }
+          "401": {
+            "description": "Unauthorized"
           },
-          "400": {
-            "description": "잘못된 요청",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "유효하지 않은 요청입니다."
-                    },
-                    "statusCode": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "서버 오류",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "서버 오류가 발생했습니다."
-                    },
-                    "statusCode": {
-                      "type": "integer",
-                      "example": 500
-                    }
-                  }
-                }
-              }
-            }
+          "403": {
+            "description": "Forbidden"
           }
         },
         "requestBody": {
@@ -1261,13 +1169,18 @@
                   "userId",
                   "fontSize"
                 ]
+                }
               }
             }
+        },
+        "security": [
+          {
+            "bearerAuth": []
           }
-        }
+        ]
       }
     },
-    "/api/settings/profile/{userId}": {
+    "/api/settings/profile": {
       "put": {
         "tags": [
           "Settings"
@@ -1276,31 +1189,19 @@
         "description": "사용자의 프로필 정보를 수정합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
-            },
-            "description": "수정할 사용자 ID"
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "사용자 정보 수정 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "사용자 정보가 성공적으로 업데이트되었습니다."
-                    }
-                  }
-                }
-              }
-            }
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         },
         "requestBody": {
@@ -1345,10 +1246,74 @@
                     "nullable": true
                   }
                 }
-              }
+              },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/medications": {
+      "patch": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "복용 약물 정보 수정",
+        "description": "사용자가 복용 중인 약물을 추가, 수정, 삭제할 수 있습니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
             }
           }
-        }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/workout-level": {
+      "patch": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "운동 난이도 수정",
+        "description": "사용자가 자신의 운동 난이도를 설정합니다. (상, 중, 하)",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },

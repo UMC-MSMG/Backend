@@ -2,22 +2,19 @@
 
 import { Router } from "express";
 import { getUserSteps, addUserSteps } from "../controllers/steps.controller";
+import { verifyToken } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// 날짜별 걸음수 조회: GET /api/steps/:userId?date=YYYY-MM-DD
+// 날짜별 걸음수 조회: GET /api/steps?date=YYYY-MM-DD
 router.get(
-    "/:userId", 
+    "/", 
+    verifyToken, // JWT 인증 미들웨어
     /*
     #swagger.tags = ['Steps']
     #swagger.summary = '사용자 걸음수 조회'
     #swagger.description = '특정 날짜에 대한 사용자의 걸음수를 조회합니다.'
-    #swagger.parameters['userId'] = {
-        in: "path",
-        required: true,
-        type: "integer",
-        description: "조회할 사용자 ID"
-    }
+    #swagger.security = [{ "bearerAuth": [] }] // JWT 인증 추가
     #swagger.parameters['date'] = {
         in: "query",
         required: true,
@@ -41,29 +38,29 @@ router.get(
         description: "해당 날짜의 걸음수 데이터가 없음"
     }
     */
-    getUserSteps);
+    getUserSteps
+);
 
-// 날짜별 걸음수 추가: PUT /api/steps/:userId/add
+// 날짜별 걸음수 추가: PUT /api/steps/add
 router.put(
-    "/:userId/add", 
+    "/add", 
+    verifyToken, // JWT 인증 미들웨어
     /*
     #swagger.tags = ['Steps']
     #swagger.summary = '사용자 걸음수 추가'
     #swagger.description = '특정 날짜의 사용자 걸음수를 추가(업데이트)합니다.'
-    #swagger.parameters['userId'] = {
-        in: "path",
-        required: true,
-        type: "integer",
-        description: "걸음수를 추가할 사용자 ID"
-    }
+    #swagger.security = [{ "bearerAuth": [] }] // JWT 인증 추가
     #swagger.requestBody = {
         required: true,
         content: {
             "application/json": {
                 schema: {
-                    steps: { type: "integer", description: "추가할 걸음수" },
-                    date: { type: "string", format: "date", description: "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)" }
-                }
+                  type: "object",
+                  properties: {
+                      steps: { type: "integer", example: 5000, description: "추가할 걸음수" },
+                      date: { type: "string", format: "date", example: "2025-02-18", description: "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)" }
+                  },
+                  required: ["steps", "date"]
             }
         }
     }
@@ -84,6 +81,7 @@ router.put(
         description: "잘못된 요청"
     }
     */
-    addUserSteps);
+    addUserSteps
+);
 
 export default router;

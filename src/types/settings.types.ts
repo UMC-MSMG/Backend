@@ -1,3 +1,5 @@
+//settings.types.ts
+
 export type ErrorResponse = {
     error: string;
     statusCode: number;
@@ -5,7 +7,6 @@ export type ErrorResponse = {
   
   // 글씨 크기 관련 타입
   export type UpdateFontSizeRequest = {
-    userId: number;
     fontSize: number; // 1(기본), 2(크게), 3(아주 크게)
   };
   
@@ -18,7 +19,6 @@ export type ErrorResponse = {
   
   // 사용자 프로필 관련 타입
   export type UpdateUserProfileRequest = {
-    userId: number;
     profileImage?: string;
     name?: string;
     gender?: "MALE" | "FEMALE";
@@ -45,3 +45,27 @@ export type ErrorResponse = {
       }
     | ErrorResponse;
   
+  export type UpdateMedicationRequest = {
+  medications: {
+    medName: string;
+    description?: string;
+    medicationDays: ("MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN")[];
+    medicationTimes: string[]; // ["08:00", "20:00"]
+  }[];
+};
+
+export type UpdateMedicationResponse =
+  | {
+      message: string;
+    }
+  | ErrorResponse;
+
+export type UpdateWorkoutLevelRequest = {
+  workoutLevel: "LOW" | "MEDIUM" | "HIGH";
+};
+
+export type UpdateWorkoutLevelResponse =
+  | {
+      message: string;
+    }
+  | ErrorResponse;
