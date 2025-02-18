@@ -1,5 +1,6 @@
 export interface KakaoLoginResponseDto {
   message: string;
+  newUser: boolean;
   user: {
     id: number;
     name: string;

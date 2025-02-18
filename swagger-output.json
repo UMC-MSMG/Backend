@@ -21,6 +21,22 @@
     {
       "name": "Users",
       "description": "유저 관련 API"
+    },
+    {
+      "name": "Points",
+      "description": "포인트, 상점 관련 API"
+    },
+    {
+      "name": "Steps",
+      "description": "걸음수 관련 API"
+    },
+    {
+      "name": "Settings",
+      "description": "설정 관련 API"
+    },
+    {
+      "name": "OpenAI",
+      "description": "챗지피티 응답 관련 API"
     }
   ],
   "paths": {
@@ -36,7 +52,9 @@
     },
     "/api/users/signup-info": {
       "patch": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "회원가입 후 추가 정보 입력",
         "description": "회원가입 후 추가 정보를 입력합니다. (JWT 인증 필요)",
         "parameters": [
@@ -125,7 +143,10 @@
                   },
                   "gender": {
                     "type": "string",
-                    "enum": ["MALE", "FEMALE"],
+                    "enum": [
+                      "MALE",
+                      "FEMALE"
+                    ],
                     "example": "MALE",
                     "description": "성별"
                   },
@@ -145,56 +166,20 @@
                     "example": 0,
                     "description": "몸무게 (kg)"
                   },
-                  "medications": {
-                    "type": "array",
-                    "description": "복용 중인 약물 목록",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "medName": {
-                          "type": "string",
-                          "example": "string",
-                          "description": "약물 이름"
-                        },
-                        "description": {
-                          "type": "string",
-                          "example": "string",
-                          "description": "약물 설명"
-                        },
-                        "medicationDays": {
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "MON",
-                              "TUE",
-                              "WED",
-                              "THU",
-                              "FRI",
-                              "SAT",
-                              "SUN"
-                            ]
-                          },
-                          "example": ["MON", "TUE"],
-                          "description": "복용 요일"
-                        },
-                        "medicationTimes": {
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
-                            "example": "10:30"
-                          },
-                          "example": ["10:30"],
-                          "description": "복용 시간 (HH:MM)"
-                        }
-                      }
-                    }
-                  },
                   "agree_to_terms": {
                     "type": "boolean",
                     "example": true,
                     "description": "이용 약관 동의 여부"
+                  },
+                  "workout_level": {
+                    "type": "string",
+                    "enum": [
+                      "HARD",
+                      "NORMAL",
+                      "EASY"
+                    ],
+                    "example": "NORMAL",
+                    "description": "운동 강도"
                   }
                 }
               }
@@ -203,9 +188,151 @@
         }
       }
     },
+    "/api/users/user-info": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "사용자 정보 조회",
+        "description": "현재 로그인한 사용자의 정보를 조회합니다.",
+        "responses": {
+          "200": {
+            "description": "사용자 정보 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "김노인"
+                    },
+                    "kakaoId": {
+                      "type": "string",
+                      "example": "1231231"
+                    },
+                    "gender": {
+                      "type": "string",
+                      "enum": [
+                        "MALE",
+                        "FEMALE"
+                      ],
+                      "example": "MALE"
+                    },
+                    "phoneNumber": {
+                      "type": "string",
+                      "example": "01011112222"
+                    },
+                    "birthDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-02-02T00:00:00.000Z"
+                    },
+                    "height": {
+                      "type": "number",
+                      "example": 170
+                    },
+                    "weight": {
+                      "type": "number",
+                      "example": 70
+                    },
+                    "deviceToken": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    },
+                    "point": {
+                      "type": "number",
+                      "example": 940000
+                    },
+                    "image": {
+                      "type": "string",
+                      "example": "http://k.kakaocdn.net/dn/cOGVzv/btsI07OSTgr/i9mY784WpokvIWmahAUj71/img_110x110.jpg"
+                    },
+                    "workoutLevel": {
+                      "type": "string",
+                      "enum": [
+                        "LOW",
+                        "NORMAL",
+                        "HIGH"
+                      ],
+                      "example": "NORMAL"
+                    },
+                    "fontSize": {
+                      "type": "string",
+                      "enum": [
+                        "SMALL",
+                        "NORMAL",
+                        "LARGE"
+                      ],
+                      "example": "NORMAL"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "example": "eyJh..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "사용자 인증 필요",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 인증이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/auth/login/phone/verify-request": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "[ 로그인 ] 전화번호 인증 코드 전송",
         "description": "로그인에 필요한 전화번호 인증 코드 전송 API. 근데 이 api 사용할때마다 20원씩 부과됩니다... 또 하루 최대 50회 제한 있어요.",
         "responses": {
@@ -302,7 +429,9 @@
                     "example": "01012345678"
                   }
                 },
-                "required": ["phoneNum"]
+                "required": [
+                  "phoneNum"
+                ]
               }
             }
           }
@@ -311,7 +440,9 @@
     },
     "/api/auth/login/phone/verify-check": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "[ 로그인 ] 휴대폰 인증번호 확인",
         "description": "사용자가 받은 인증번호를 확인하여 로그인 처리하는 API",
         "responses": {
@@ -436,7 +567,239 @@
                     "example": "902591"
                   }
                 },
-                "required": ["phoneNum", "code"]
+                "required": [
+                  "phoneNum",
+                  "code"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/signup/phone/verify-request": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "[ 회원가입 ] 전화번호 인증 코드 전송",
+        "description": "로그인에 필요한 전화번호 인증 코드 전송 API. 근데 이 api 사용할때마다 20원씩 부과됩니다... 또 하루 최대 50회 제한 있어요.",
+        "responses": {
+          "200": {
+            "description": "인증 코드 전송 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "인증번호가 전송되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (휴대폰 번호 미입력)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "휴대폰 번호를 입력해주세요"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "이미 존재하는 유저",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "이미 존재하는 유저입니다. 로그인을 진행해주세요."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNum": {
+                    "type": "string",
+                    "example": "01012345678"
+                  }
+                },
+                "required": [
+                  "phoneNum"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/signup/phone/verify-check": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "[ 회원가입 ] 휴대폰 인증번호 확인",
+        "description": "사용자가 받은 인증번호를 확인하여 회원가입 처리하는 API",
+        "responses": {
+          "200": {
+            "description": "회원가입 성공 (토큰 발급)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "accessToken": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUz..."
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUz..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (필수 데이터 누락)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "휴대폰 번호와 인증번호가 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 (잘못된 인증번호)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "인증번호가 올바르지 않습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNum": {
+                    "type": "string",
+                    "example": "01011112222"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "902591"
+                  }
+                },
+                "required": [
+                  "phoneNum",
+                  "code"
+                ]
               }
             }
           }
@@ -457,10 +820,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "phoneNum": {
-                    "example": "any"
-                  },
-                  "code": {
+                  "id": {
                     "example": "any"
                   }
                 }
@@ -482,7 +842,9 @@
     },
     "/api/auth/login/kakao": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "카카오 로그인 리다이렉트 API",
         "description": "카카오 로그인 페이지로 이동합니다",
         "responses": {
@@ -494,7 +856,9 @@
     },
     "/api/auth/kakao/callback": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "카카오 로그인 콜백 API",
         "description": "카카오 로그인 성공 시 JWT 반환",
         "responses": {
@@ -502,21 +866,129 @@
             "description": "카카오 로그인 성공",
             "content": {
               "application/json": {
-                "example": {
-                  "message": "카카오 로그인 성공",
-                  "user": {
-                    "id": 1,
-                    "name": "홍길동",
-                    "image": "https://example.com/profile.jpg"
-                  },
-                  "accessToken": "eyJhbGciOiJIUz...",
-                  "refreshToken": "eyJhbGciOiJIUz..."
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "카카오 로그인 성공"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "홍길동"
+                        },
+                        "image": {
+                          "type": "string",
+                          "example": "https://example.com/profile.jpg"
+                        }
+                      }
+                    },
+                    "newUser": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "accessToken": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUz..."
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUz..."
+                    }
+                  }
                 }
               }
             }
           },
           "401": {
-            "description": "로그인 실패"
+            "description": "로그인 실패",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "로그인 실패"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/points/my-points": {
+      "get": {
+        "tags": [
+          "Points"
+        ],
+        "summary": "사용자 포인트 조회",
+        "description": "현재 로그인한 사용자의 포인트를 조회합니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "포인트 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "user_id": 1,
+                  "point": 1500,
+                  "message": "포인트 조회 성공"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "사용자 인증 필요"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "서버 오류"
@@ -529,44 +1001,17 @@
         ]
       }
     },
-    "/api/workouts/": {
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/workouts/log/{userId}": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
+    "/api/points/add": {
+      "patch": {
+        "tags": [
+          "Points"
         ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/points/{userId}": {
-      "get": {
-        "description": "",
+        "summary": "사용자 포인트 추가",
+        "description": "현재 로그인한 사용자에게 포인트를 추가합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -574,68 +1019,156 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "포인트 추가 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "number",
+                      "example": "1"
+                    },
+                    "updated_point": {
+                      "type": "number",
+                      "example": "200"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "포인트 추가 성공"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "사용자 인증 필요"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
           }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "type": "number",
+                    "example": "50"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
-    "/api/points/{userId}/add": {
-      "put": {
-        "description": "",
+    "/api/points/buy-product": {
+      "patch": {
+        "tags": [
+          "Points"
+        ],
+        "summary": "상품 구매",
+        "description": "현재 로그인한 사용자가 포인트를 사용하여 상품을 구매합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
             }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/points/{userId}/use": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+          "200": {
+            "description": "상품 구매 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product_id": {
+                      "type": "number",
+                      "example": "1"
+                    },
+                    "updated_point": {
+                      "type": "number",
+                      "example": "200"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "상품 구매 성공"
+                    }
+                  }
+                }
+              }
             }
+          },
+          "400": {
+            "description": "잘못된 요청 (상품 ID 누락)"
+          },
+          "401": {
+            "description": "사용자 인증 필요"
+          },
+          "403": {
+            "description": "포인트 부족"
+          },
+          "404": {
+            "description": "상품이 존재하지 않음"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
           }
         ],
-        "responses": {
-          "default": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": {
+                    "type": "number",
+                    "example": "1"
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/steps/{userId}": {
+    "/api/steps/": {
       "get": {
-        "tags": ["Steps"],
+        "tags": [
+          "Steps"
+        ],
         "summary": "사용자 걸음수 조회",
         "description": "특정 날짜에 대한 사용자의 걸음수를 조회합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
-            },
-            "description": "조회할 사용자 ID"
+            }
           },
           {
             "name": "date",
@@ -654,40 +1187,54 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "userId": {
-                    "type": "integer"
-                  },
-                  "steps": {
-                    "type": "integer"
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "걸음수 조회 성공"
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "integer"
+                    },
+                    "steps": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "걸음수 조회 성공"
+                    }
                   }
                 }
               }
             }
           },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "404": {
             "description": "해당 날짜의 걸음수 데이터가 없음"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
-    "/api/steps/{userId}/add": {
+    "/api/steps/add": {
       "put": {
-        "tags": ["Steps"],
+        "tags": [
+          "Steps"
+        ],
         "summary": "사용자 걸음수 추가",
         "description": "특정 날짜의 사용자 걸음수를 추가(업데이트)합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
-            },
-            "description": "걸음수를 추가할 사용자 ID"
+            }
           }
         ],
         "responses": {
@@ -696,18 +1243,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "userId": {
-                    "type": "integer"
-                  },
-                  "steps": {
-                    "type": "integer"
-                  },
-                  "totalSteps": {
-                    "type": "integer"
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "걸음수가 성공적으로 추가되었습니다."
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "integer"
+                    },
+                    "steps": {
+                      "type": "integer"
+                    },
+                    "totalSteps": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "걸음수가 성공적으로 추가되었습니다."
+                    }
                   }
                 }
               }
@@ -715,21 +1265,41 @@
           },
           "400": {
             "description": "잘못된 요청"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "steps": {
-                  "type": "integer",
-                  "description": "추가할 걸음수"
-                },
-                "date": {
-                  "type": "string",
-                  "format": "date",
-                  "description": "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)"
+                "type": "object",
+                "required": [
+                  "steps",
+                  "date"
+                ],
+                "properties": {
+                  "steps": {
+                    "type": "integer",
+                    "example": 5000,
+                    "description": "추가할 걸음수"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2025-02-18",
+                    "description": "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)"
+                  }
                 }
               }
             }
@@ -739,7 +1309,9 @@
     },
     "/api/histories/summary": {
       "get": {
-        "tags": ["History"],
+        "tags": [
+          "History"
+        ],
         "summary": "운동일지 요약 데이터 반환",
         "description": "사용자의 운동일지에 대한 요약 데이터를 반환합니다. (JWT 인증 필요)",
         "parameters": [
@@ -885,7 +1457,9 @@
     },
     "/api/histories/calendar/{year}/{month}": {
       "get": {
-        "tags": ["History"],
+        "tags": [
+          "History"
+        ],
         "summary": "운동일지 달력 데이터 반환",
         "description": "해당 달의 운동한 일수와 번 돈을 반환합니다. (JWT 인증 필요)",
         "parameters": [
@@ -1006,9 +1580,20 @@
     },
     "/api/settings/font-size": {
       "put": {
-        "tags": ["Settings"],
+        "tags": [
+          "Settings"
+        ],
         "summary": "글씨 크기 수정",
         "description": "사용자의 글씨 크기 설정을 수정합니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "글씨 크기 수정 성공",
@@ -1046,6 +1631,29 @@
               }
             }
           },
+          "401": {
+            "description": "인증 실패",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "인증 토큰이 필요합니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "서버 오류",
             "content": {
@@ -1067,6 +1675,11 @@
             }
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1074,36 +1687,34 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "userId": {
-                    "type": "integer",
-                    "description": "수정할 사용자 ID"
-                  },
                   "fontSize": {
                     "type": "integer",
                     "description": "수정할 글씨 크기 (1: 기본, 2: 크게, 3: 아주 크게)"
                   }
                 },
-                "required": ["userId", "fontSize"]
+                "required": [
+                  "fontSize"
+                ]
               }
             }
           }
         }
       }
     },
-    "/api/settings/profile/{userId}": {
+    "/api/settings/profile": {
       "put": {
-        "tags": ["Settings"],
+        "tags": [
+          "Settings"
+        ],
         "summary": "사용자 정보 수정",
         "description": "사용자의 프로필 정보를 수정합니다.",
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "schema": {
               "type": "string"
-            },
-            "description": "수정할 사용자 ID"
+            }
           }
         ],
         "responses": {
@@ -1122,8 +1733,76 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "유효하지 않은 요청입니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "인증 토큰이 필요합니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1143,7 +1822,10 @@
                   },
                   "gender": {
                     "type": "string",
-                    "enum": ["MALE", "FEMALE"],
+                    "enum": [
+                      "MALE",
+                      "FEMALE"
+                    ],
                     "description": "사용자 성별",
                     "nullable": true
                   },
@@ -1165,6 +1847,531 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/settings/medications": {
+      "patch": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "복용 약물 정보 수정",
+        "description": "사용자가 복용 중인 약물을 추가, 수정, 삭제할 수 있습니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "약물 정보 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "약물 정보가 성공적으로 업데이트되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "유효하지 않은 요청입니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "인증 토큰이 필요합니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "medications": {
+                    "type": "array",
+                    "description": "사용자가 등록할 약물 목록",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "medName": {
+                          "type": "string",
+                          "example": "타이레놀",
+                          "description": "약물 이름"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "진통제",
+                          "description": "약물 설명",
+                          "nullable": true
+                        },
+                        "medicationDays": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "MON",
+                              "TUE",
+                              "WED",
+                              "THU",
+                              "FRI",
+                              "SAT",
+                              "SUN"
+                            ]
+                          },
+                          "example": [
+                            "MON",
+                            "WED",
+                            "FRI"
+                          ],
+                          "description": "복용 요일"
+                        },
+                        "medicationTimes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+                            "example": "08:30"
+                          },
+                          "example": [
+                            "08:30",
+                            "20:00"
+                          ],
+                          "description": "복용 시간 (HH:MM)"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "medications"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/workout-level": {
+      "patch": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "운동 난이도 수정",
+        "description": "사용자가 자신의 운동 난이도를 설정합니다. (상, 중, 하)",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "운동 난이도 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "운동 난이도가 성공적으로 업데이트되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "유효하지 않은 요청입니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "인증 토큰이 필요합니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workoutLevel": {
+                    "type": "string",
+                    "enum": [
+                      "LOW",
+                      "MEDIUM",
+                      "HIGH"
+                    ],
+                    "example": "MEDIUM",
+                    "description": "운동 난이도 (LOW: 하, MEDIUM: 중, HIGH: 상)"
+                  }
+                },
+                "required": [
+                  "workoutLevel"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/gpt/generate-questions": {
+      "post": {
+        "tags": [
+          "OpenAI"
+        ],
+        "summary": "BMI 계산 및 운동 관련 질문 생성",
+        "description": "사용자의 키와 몸무게를 입력하면 BMI를 계산하고, 비만도를 평가하여 운동 관련 질문을 생성합니다.",
+        "responses": {
+          "200": {
+            "description": "BMI 및 운동 관련 질문 반환",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bmi": {
+                      "type": "number",
+                      "example": 22.86,
+                      "description": "계산된 BMI 값"
+                    },
+                    "category": {
+                      "type": "string",
+                      "example": "정상",
+                      "description": "BMI에 따른 비만도 평가"
+                    },
+                    "questions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "하루 동안 얼마나 많이 걷나요?",
+                        "계단을 오르내릴 때 어려움이 있나요?"
+                      ],
+                      "description": "운동 관련 질문 리스트"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (키 또는 몸무게 누락)"
+          },
+          "500": {
+            "description": "서버 오류"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "height": {
+                    "type": "number",
+                    "example": 175,
+                    "description": "사용자 키 (cm)"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "example": 70,
+                    "description": "사용자 몸무게 (kg)"
+                  },
+                  "medications": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "혈압약"
+                    ],
+                    "description": "사용자가 복용 중인 약물 리스트"
+                  }
+                },
+                "required": [
+                  "height",
+                  "weight"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/gpt/determine-level": {
+      "post": {
+        "tags": [
+          "OpenAI"
+        ],
+        "summary": "사용자의 응답을 기반으로 운동 난이도 결정",
+        "description": "사용자가 응답한 운동 관련 질문의 답변을 기반으로 운동 난이도를 분석합니다.",
+        "responses": {
+          "200": {
+            "description": "운동 난이도 결정 결과 반환",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fitnessLevel": {
+                      "type": "string",
+                      "example": "초급(하)",
+                      "description": "사용자의 운동 난이도 (초급(하) / 초급(상) / 중급 / 고급)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (응답 데이터 누락)"
+          },
+          "500": {
+            "description": "서버 오류"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "responses": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "하루 30분 미만",
+                      "어려움 있음",
+                      "넘어진 적 있음",
+                      "거의 안 함",
+                      "거의 안 함"
+                    ],
+                    "description": "사용자의 질문 응답 리스트"
+                  }
+                },
+                "required": [
+                  "responses"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/gpt/transcribe-audio": {
+      "post": {
+        "tags": [
+          "OpenAI"
+        ],
+        "summary": "사용자의 음성을 텍스트로 변환",
+        "description": "Whisper API를 사용하여 음성을 텍스트로 변환합니다.",
+        "responses": {
+          "200": {
+            "description": "음성 변환 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "example": "하루에 30분 정도 걷습니다.",
+                      "description": "변환된 텍스트"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "audio": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "업로드할 음성 파일"
+                  }
+                },
+                "required": [
+                  "audio"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workouts/categories/list/list": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/workouts/details/{workoutId}": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
           }
         }
       }

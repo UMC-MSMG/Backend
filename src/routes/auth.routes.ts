@@ -11,6 +11,9 @@ router.post("/login/phone/verify-request", AuthController.sendLoginCode);
 
 // 인증 코드 확인
 router.post("/login/phone/verify-check", AuthController.verifyLoginCode);
+router.post("/signup/phone/verify-request", AuthController.sendSignupCode);
+router.post("/signup/phone/verify-check", AuthController.verifySignupCode);
+
 router.post("/test", AuthController.test);
 
 // 이메일/비밀번호 일반 로그인
