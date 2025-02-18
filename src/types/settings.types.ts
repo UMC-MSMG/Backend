@@ -45,6 +45,7 @@ export type ErrorResponse = {
       }
     | ErrorResponse;
   
+  // 복용 약물 관련 타입
   export type UpdateMedicationRequest = {
   medications: {
     medName: string;

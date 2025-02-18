@@ -21,6 +21,18 @@ const options = {
       name: "Points",
       description: "포인트, 상점 관련 API",
     },
+    {
+      name: "Steps",
+      description: "걸음수 관련 API",
+    },
+    {
+      name: "Settings",
+      description: "설정 관련 API",
+    },
+    {
+      name: "OpenAI",
+      description: "챗지피티 응답 관련 API",
+    },
   ],
   servers: [
     {
