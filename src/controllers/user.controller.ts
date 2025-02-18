@@ -23,30 +23,8 @@ export const userController = {
                       birth_date: { type: "string", format: "date", example: "2025-02-02", description: "생년월일 (YYYY-MM-DD)" },
                       height: { type: "number", example: 0, description: "키 (cm)" },
                       weight: { type: "number", example: 0, description: "몸무게 (kg)" },
-                      medications: {
-                          type: "array",
-                          description: "복용 중인 약물 목록",
-                          items: {
-                              type: "object",
-                              properties: {
-                                  medName: { type: "string", example: "string", description: "약물 이름" },
-                                  description: { type: "string", example: "string", description: "약물 설명" },
-                                  medicationDays: {
-                                      type: "array",
-                                      items: { type: "string", enum: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] },
-                                      example: ["MON", "TUE"],
-                                      description: "복용 요일"
-                                  },
-                                  medicationTimes: {
-                                      type: "array",
-                                      items: { type: "string", pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$", example: "10:30" },
-                                      example: ["10:30"],
-                                      description: "복용 시간 (HH:MM)"
-                                  }
-                              }
-                          }
-                      },
-                      agree_to_terms: { type: "boolean", example: true, description: "이용 약관 동의 여부" }
+                      agree_to_terms: { type: "boolean", example: true, description: "이용 약관 동의 여부" },
+                      workout_level: { type: "string", enum: ["HARD", "NORMAL","EASY"], example: "NORMAL", description: "운동 강도" },
                   }
               }
           }
@@ -104,8 +82,6 @@ export const userController = {
 
       //사용자 정보 업데이트
       await userService.updateNewUserInfo(userId, userData);
-      //약물 정보 추가
-      await userService.addMedications(userId, userData.medications);
 
       res
         .status(200)

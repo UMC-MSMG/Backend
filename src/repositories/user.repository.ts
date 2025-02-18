@@ -23,6 +23,7 @@ export const UserRepository = {
         height: userData.height,
         weight: userData.weight,
         consentPrivacyPolicy: userData.agree_to_terms,
+        workoutLevel: userData.workout_level || "NORMAL",
       },
     }),
 
@@ -55,4 +56,3 @@ export const UserRepository = {
     );
   },
 };
-

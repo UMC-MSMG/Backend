@@ -13,5 +13,5 @@ export interface SignupInfoDto {
   height: number;
   weight: number;
   agree_to_terms: boolean;
-  medications: MedicationDto[];
+  workout_level: "HARD" | "NORMAL" | "EASY";
 }
