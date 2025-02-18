@@ -551,11 +551,11 @@ export class AuthController {
   }
 
   static async test(req: Request, res: Response): Promise<any> {
-    const { phoneNum, code } = req.body;
-    console.log("ㅇㄹㅁㄴㅇㄹㅁㄴㅇ", phoneNum);
-    const data = await VerificationService.test(phoneNum);
+    const { id } = req.body;
+    console.log("ㅇㄹㅁㄴㅇㄹㅁㄴㅇ", id);
+    const data = await VerificationService.handleToken(id);
     console.log("데이터", data);
 
-    res.status(200).json("성공");
+    res.status(200).json(data);
   }
 }

@@ -21,4 +21,12 @@ export const userService = {
       throw new Error("약물 정보 추가 실패");
     }
   },
+  getUserInfo: async (userId: number) => {
+    try {
+      const info = UserRepository.getUserInfo(userId);
+      return info;
+    } catch (error) {
+      throw new Error("사용자 정보 조회 실패");
+    }
+  },
 };

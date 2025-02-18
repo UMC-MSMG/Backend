@@ -55,4 +55,25 @@ export const UserRepository = {
       )
     );
   },
+  getUserInfo: async (userId: number) => {
+    return await prisma.user.findFirst({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        kakaoId: true,
+        gender: true,
+        phoneNumber: true,
+        birthDate: true,
+        height: true,
+        weight: true,
+        deviceToken: true,
+        point: true,
+        image: true,
+        workoutLevel: true,
+        fontSize: true,
+        refreshToken: true,
+      },
+    });
+  },
 };
