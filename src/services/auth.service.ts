@@ -16,7 +16,7 @@ export class AuthService {
       if (!user) {
         throw new Error("카카오 로그인 실패");
       }
-      console.log(user);
+      console.log("카카오 유저", user);
       console.log("id: ", user.user.id);
 
       return {
@@ -26,6 +26,7 @@ export class AuthService {
           name: user.user.name,
           image: user.user.image,
         },
+        newUser: user.newUser,
         accessToken: user.accessToken,
         refreshToken: user.refreshToken,
       };
@@ -53,7 +54,7 @@ const generateVerificationCode = (): string => {
 const verificationCode = new Map<string, VerificationData>();
 
 //export 함수
-export const Verification = {
+export const VerificationService = {
   //인증 코드 전송 함수
   sendCode: async (phoneNum: string) => {
     const code = generateVerificationCode();
@@ -122,6 +123,39 @@ export const Verification = {
       userId: user?.id,
     };
   },
+  //회원가입 인증
+  verifySignupCode: async (phoneNum: string, code: string) => {
+    const storedData = verificationCode.get(phoneNum);
+    // @ts-ignore
+    console.log(
+      Array.from(verificationCode.entries()).map(([phoneNum, data]) => ({
+        phoneNum,
+        ...data,
+      }))
+    );
+
+    if (!storedData) {
+      throw { statusCode: 400, message: "인증번호가 존재하지 않습니다.." };
+    }
+    const { code: storedCode, expiresAt, timeoutId } = storedData;
+    if (Date.now() > expiresAt) {
+      verificationCode.delete(phoneNum);
+      clearTimeout(timeoutId); // 타이머 제거
+      throw { statusCode: 400, message: "인증번호가 만료되었습니다." };
+    }
+    if (storedCode !== code) {
+      throw { statusCode: 400, message: "인증번호가 올바르지 않습니다." };
+    }
+    verificationCode.delete(phoneNum);
+    clearTimeout(timeoutId);
+    const userId = await AuthRepository.createUserByPhone(phoneNum);
+    if (!userId) {
+      throw { statusCode: 500, message: "서버 에러" };
+    }
+    return {
+      userId,
+    };
+  },
   // 존재하는 전화번호인지 확인하기
   isPhoneNum: async (phoneNum: string) => {
     const user = await AuthRepository.findPhoneNum(phoneNum);
@@ -134,10 +168,12 @@ export const Verification = {
   handleToken: async (userId: number) => {
     const accessToken = generateAccessToken(userId);
     const refreshToken = generateRefreshToken(userId);
+    console.log("서비스 유저 아이디", userId);
     await updateRefreshToken(userId, refreshToken);
     return { user_id: userId, accessToken, refreshToken };
   },
   test: async (phoneNum: string) => {
-    return await AuthRepository.findPhoneNum(phoneNum);
+    console.log("여기기기기ㅣ");
+    return await AuthRepository.createUserByPhone(phoneNum);
   },
 };

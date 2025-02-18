@@ -40,14 +40,17 @@ export default function initializeKakaoStrategy() {
 
           // 기존 유저 확인
           let user = await findUserByKakaoId(kakaoId);
-
+          let newUser: boolean;
           if (!user) {
+            newUser = true;
             // 신규 유저 생성
             user = await createUserByKakaoLogin(
               kakaoId,
               nickname,
               profileImage
             );
+          } else {
+            newUser = false;
           }
 
           // JWT 생성
@@ -57,7 +60,7 @@ export default function initializeKakaoStrategy() {
           // Refresh Token DB 저장
           await updateRefreshToken(user.id, refreshToken);
 
-          return done(null, { user, accessToken, refreshToken });
+          return done(null, { user, accessToken, refreshToken, newUser });
         } catch (error) {
           console.error("카카오 로그인 중 오류 발생:", error);
           return done(error, null);

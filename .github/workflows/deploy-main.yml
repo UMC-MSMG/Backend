@@ -45,14 +45,9 @@ jobs:
             IdentityFile ~/.ssh/id_rsa
             StrictHostKeyChecking no
           END
-
-      - name: Install Node.js and TSX on EC2
-        run: |
-          ssh -o ServerAliveInterval=60 Backend "until curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -; do echo 'Retrying...'; sleep 5; done"
-          ssh Backend "sudo apt-get install -y nodejs"
-          ssh Backend "npm install -g tsx || npm install -g tsx"
-          //ssh Backend "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs"
-          //ssh Backend "npm install -g tsx"
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
 
       - name: Copy Workspace
         run: |
@@ -69,10 +64,6 @@ jobs:
       - name: Apply prisma migrations
         if: steps.paths-filter.outputs.prisma == 'true'
         run: |
-          ssh Backend "$(npm bin -g)/pm2 delete umc-7th-app || true"
-          ssh Backend "$(npm bin -g)/pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
-          //ssh Backend "pm2 delete umc-7th-app || true"
-          //ssh Backend "pm2 start /home/ubuntu/app/src/index.ts --name 'umc-7th-app' --interpreter=tsx"
           ssh msmg-umc 'cd /opt/app; npm exec prisma migrate deploy'
 
       - name: Start or Restart PM2 Process
