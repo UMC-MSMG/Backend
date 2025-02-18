@@ -328,7 +328,7 @@ export class AuthController {
       if (userId) {
         const token = await VerificationService.handleToken(userId);
         console.log(token);
-        res.json(200).json(token);
+        res.status(200).json(token);
       } else {
         return res.status(500).json("사용자 id 찾기 오류");
       }
@@ -542,8 +542,12 @@ export class AuthController {
       const userId = await VerificationService.verifySignupCode(phoneNum, code);
       console.log("컨트롤러 유저 아이디", userId);
       const token = await VerificationService.handleToken(userId.userId);
-      return token;
-    } catch (error) {}
+      console.log("컨트 토큰", token);
+      res.status(200).json(token);
+    } catch (error) {
+      console.error("인증번호 전송 처리 중 오류:", error);
+      res.status(500).json({ message: error });
+    }
   }
 
   static async test(req: Request, res: Response): Promise<any> {
