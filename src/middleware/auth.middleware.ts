@@ -30,12 +30,13 @@ export const verifyToken = (
         .json({ message: "유효한 사용자 정보가 포함되지 않은 토큰입니다." });
       return;
     }
-    // ✅ id가 string이라면 number로 변환
+    // ✅ id가 string이라면 number로 변환,workoutLevel도 포함함
     req.user = {
       ...decoded,
       id:
         typeof decoded.id === "string" ? parseInt(decoded.id, 10) : decoded.id,
-    } as JwtPayload & { id: number }; // id를 number로 보장
+        workoutLevel:decoded.workoutLevel, //workoutLevel 추가
+    } as JwtPayload & { id: number; workoutLevel:string }; // id를 number로 보장
 
     return next();
   } catch (error) {

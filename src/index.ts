@@ -19,11 +19,13 @@ import session from "express-session";
 //라우트 임포트
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
-import workoutRoutes from "./routes/workout.routes";
 import pointRoutes from "./routes/points.routes";
 import stepRoutes from "./routes/steps.routes";
 import historyRoutes from "./routes/history.routes";
 import settingsRoutes from "./routes/settings.routes";
+import workoutCategoryRoutes from  "./routes/workoutCategory.routes";
+import workoutDetailRoutes from "./routes/workoutDetail.routes";
+
 
 const app = express();
 const port = 3000;
@@ -69,11 +71,12 @@ app.use(passport.session());
 // 라우트 연결
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/workouts", workoutRoutes); // Use the new workout routes
 app.use("/api/points", pointRoutes);
 app.use("/api/steps", stepRoutes);
 app.use("/api/histories", historyRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/workouts/categories/list", workoutCategoryRoutes); // WorkoutCategory 추가
+app.use("/api/workouts/details", workoutDetailRoutes); //workout 영상 링크보내주는 api
 
 // 서버 실행
 app.listen(port, () => {
