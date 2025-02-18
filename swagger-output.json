@@ -23,9 +23,14 @@
       "description": "유저 관련 API"
     },
     {
-      "name": "Points",
-      "description": "포인트, 상점 관련 API"
+      "name": "WorkoutCategory",
+      "description": "운동 카테고리 관련 API."
+    },
+    {
+      "name": "WorkoutDetail",
+      "description": "운동세부영상 관련 API."
     }
+
   ],
   "paths": {
     "/": {
@@ -1126,31 +1131,91 @@
         ],
         "summary": "글씨 크기 수정",
         "description": "사용자의 글씨 크기 설정을 수정합니다.",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
+        "responses": {
+          "200": {
+            "description": "글씨 크기 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "글씨 크기가 성공적으로 변경되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "유효하지 않은 요청입니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    }
+                  }
+                }
+              }
             }
           }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
         },
-        "security": [
-          {
-            "bearerAuth": []
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer",
+                    "description": "수정할 사용자 ID"
+                  },
+                  "fontSize": {
+                    "type": "integer",
+                    "description": "수정할 글씨 크기 (1: 기본, 2: 크게, 3: 아주 크게)"
+                  }
+                },
+                "required": [
+                  "userId",
+                  "fontSize"
+                ]
+              }
+            }
           }
-        ]
+        }
       }
     },
-    "/api/settings/profile": {
+    "/api/settings/profile/{userId}": {
       "put": {
         "tags": [
           "Settings"
@@ -1159,92 +1224,210 @@
         "description": "사용자의 프로필 정보를 수정합니다.",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "userId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "수정할 사용자 ID"
           }
         ],
         "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
+          "200": {
+            "description": "사용자 정보 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 정보가 성공적으로 업데이트되었습니다."
+                    }
+                  }
+                }
+              }
+            }
           }
         },
-        "security": [
-          {
-            "bearerAuth": []
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileImage": {
+                    "type": "string",
+                    "description": "프로필 이미지 URL",
+                    "nullable": true
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "사용자 이름",
+                    "nullable": true
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "MALE",
+                      "FEMALE"
+                    ],
+                    "description": "사용자 성별",
+                    "nullable": true
+                  },
+                  "height": {
+                    "type": "number",
+                    "description": "키 (cm)",
+                    "nullable": true
+                  },
+                  "weight": {
+                    "type": "number",
+                    "description": "몸무게 (kg)",
+                    "nullable": true
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "description": "전화번호",
+                    "nullable": true
+                  }
+                }
+              }
+            }
           }
-        ]
+        }
       }
     },
-    "/api/settings/medications": {
-      "patch": {
-        "tags": [
-          "Settings"
-        ],
-        "summary": "복용 약물 정보 수정",
-        "description": "사용자가 복용 중인 약물을 추가, 수정, 삭제할 수 있습니다.",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
+      "/workouts": {
+        "get": {
+          "tags": [
+            "WorkoutCategory"
+          ],
+          "summary": "카테고리별 운동 목록 조회",
+          "description": "사용자의 운동 레벨과 카테고리 ID를 통해 운동 목록을 조회하는 API입니다.",
+          "parameters": [
+            {
+              "in": "query",
+              "name": "level",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "사용자의 운동 레벨 (1: 초급, 2: 중급, 3: 고급)"
+            },
+            {
+              "in": "query",
+              "name": "categoryId",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "운동 카테고리 ID (1: 유산소, 2: 근력, 3: 균형, 4: 유연성)"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "운동 목록 반환",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "workouts": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "운동 ID"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "운동 이름"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "잘못된 요청"
+            },
+            "500": {
+              "description": "서버 내부 오류"
             }
           }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/settings/workout-level": {
-      "patch": {
-        "tags": [
-          "Settings"
-        ],
-        "summary": "운동 난이도 수정",
-        "description": "사용자가 자신의 운동 난이도를 설정합니다. (상, 중, 하)",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
+        }
+      },
+      "/workout-details": {
+        "get": {
+          "tags": [
+            "WorkoutDetail"
+          ],
+          "summary": "운동 세부 사항 조회",
+          "description": "운동 ID를 통해 운동의 세부 사항을 조회하는 API입니다. 운동 단계별 설명과 동영상을 포함합니다.",
+          "parameters": [
+            {
+              "in": "query",
+              "name": "workoutId",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "운동 ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "운동 세부 사항 반환",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "세부 사항 ID"
+                        },
+                        "step": {
+                          "type": "integer",
+                          "description": "운동 단계"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "운동 단계별 설명"
+                        },
+                        "link": {
+                          "type": "string",
+                          "description": "운동 단계 동영상 링크",
+                          "example": "https://s3-ap-northeast-2.amazonaws.com/workout-videos/pushup_step1.mp4"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "잘못된 요청"
+            },
+            "500": {
+              "description": "서버 내부 오류"
             }
           }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
+        }
       }
     }
-  },
-  "components": {
+    ,
+
+    "components": {
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
