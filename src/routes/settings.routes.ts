@@ -12,12 +12,12 @@ const router = Router();
  */
 router.put(
   "/font-size",
-  verifyToken, // JWT 인증 적용
+  verifyToken, 
   /*
   #swagger.tags = ['Settings']
   #swagger.summary = '글씨 크기 수정'
   #swagger.description = '사용자의 글씨 크기 설정을 수정합니다.'
-  #swagger.security = [{ "bearerAuth": [] }] // JWT 인증 추가
+  #swagger.security = [{ "bearerAuth": [] }] 
   #swagger.requestBody = {
     required: true,
     content: {
@@ -97,12 +97,12 @@ router.put(
  */
 router.put(
   "/profile",
-  verifyToken, // JWT 인증 적용
+  verifyToken, 
   /*
   #swagger.tags = ['Settings']
   #swagger.summary = '사용자 정보 수정'
   #swagger.description = '사용자의 프로필 정보를 수정합니다.'
-  #swagger.security = [{ "bearerAuth": [] }] // JWT 인증 추가
+  #swagger.security = [{ "bearerAuth": [] }]
   #swagger.requestBody = {
     required: true,
     content: {
@@ -175,7 +175,7 @@ router.put(
         }
       }
     }
-  }
+  } 
   */
   updateUserProfile
 );
@@ -186,12 +186,12 @@ router.put(
  */
 router.patch(
   "/medications",
-  verifyToken, // JWT 인증 적용
+  verifyToken,
   /*
   #swagger.tags = ['Settings']
   #swagger.summary = '복용 약물 정보 수정'
   #swagger.description = '사용자가 복용 중인 약물을 추가, 수정, 삭제할 수 있습니다.'
-  #swagger.security = [{ "bearerAuth": [] }] // JWT 인증 추가
+  #swagger.security = [{ "bearerAuth": [] }] 
   #swagger.requestBody = {
     required: true,
     content: {
@@ -293,12 +293,12 @@ router.patch(
 */
 router.patch(
   "/workout-level",
-  verifyToken, // JWT 인증 적용
+  verifyToken, 
   /*
   #swagger.tags = ['Settings']
   #swagger.summary = '운동 난이도 수정'
   #swagger.description = '사용자가 자신의 운동 난이도를 설정합니다. (상, 중, 하)'
-  #swagger.security = [{ "bearerAuth": [] }] // JWT 인증 추가
+  #swagger.security = [{ "bearerAuth": [] }] 
   #swagger.requestBody = {
     required: true,
     content: {

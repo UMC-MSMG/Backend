@@ -101,6 +101,8 @@ export const gptService = {
       model: "gpt-4o",
       messages: [{ role: "user", content: prompt }],
     });
+    
+    console.log("🔹 GPT 응답:", response);
 
     const content = response.choices[0]?.message?.content || "";
     return content.split("\n").filter(q => q.trim().length > 0);
