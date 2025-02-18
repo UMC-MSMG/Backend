@@ -35,6 +35,7 @@ export const createUserByKakaoLogin = async (
 // 리프레시 토큰 업데이트
 export const updateRefreshToken = async (id: number, refreshToken: string) => {
   try {
+    console.log("리포 유저 아이디", id);
     return await prisma.user.update({
       where: { id },
       data: { refreshToken },
@@ -51,5 +52,10 @@ export const AuthRepository = {
     return await prisma.user.findFirst({
       where: { phoneNumber: phoneNum },
     });
+  },
+  createUserByPhone: async (phoneNum: string) => {
+    const user = await prisma.user.create({ data: { phoneNumber: phoneNum } });
+    console.log("프리즈마 유저", user.id);
+    return user.id;
   },
 };
