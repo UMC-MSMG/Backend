@@ -1226,8 +1226,8 @@
         "tags": [
           "Steps"
         ],
-        "summary": "사용자 걸음수 추가",
-        "description": "특정 날짜의 사용자 걸음수를 추가(업데이트)합니다.",
+        "summary": "사용자 걸음수 저장",
+        "description": "특정 날짜의 사용자 걸음수를 저장합니다.",
         "parameters": [
           {
             "name": "authorization",
@@ -1239,7 +1239,7 @@
         ],
         "responses": {
           "200": {
-            "description": "걸음수 추가 성공",
+            "description": "걸음수 저장 성공",
             "content": {
               "application/json": {
                 "schema": {
@@ -1248,15 +1248,12 @@
                     "userId": {
                       "type": "integer"
                     },
-                    "steps": {
-                      "type": "integer"
-                    },
                     "totalSteps": {
                       "type": "integer"
                     },
                     "message": {
                       "type": "string",
-                      "example": "걸음수가 성공적으로 추가되었습니다."
+                      "example": "걸음수가 성공적으로 업데이트되었습니다."
                     }
                   }
                 }
@@ -1292,13 +1289,13 @@
                   "steps": {
                     "type": "integer",
                     "example": 5000,
-                    "description": "추가할 걸음수"
+                    "description": "저장할 걸음수"
                   },
                   "date": {
                     "type": "string",
                     "format": "date",
                     "example": "2025-02-18",
-                    "description": "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)"
+                    "description": "걸음수를 저장할 날짜 (YYYY-MM-DD 형식)"
                   }
                 }
               }
@@ -1600,12 +1597,12 @@
       }
     },
     "/api/settings/font-size": {
-      "put": {
+      "patch": {
         "tags": [
           "Settings"
         ],
         "summary": "글씨 크기 수정",
-        "description": "사용자의 글씨 크기 설정을 수정합니다.",
+        "description": "사용자의 글씨 크기 설정을 수정합니다.(1: 기본, 2: 크게, 3: 아주 크게)",
         "parameters": [
           {
             "name": "authorization",
@@ -1872,179 +1869,6 @@
         }
       }
     },
-    "/api/settings/medications": {
-      "patch": {
-        "tags": [
-          "Settings"
-        ],
-        "summary": "복용 약물 정보 수정",
-        "description": "사용자가 복용 중인 약물을 추가, 수정, 삭제할 수 있습니다.",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "약물 정보 수정 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "약물 정보가 성공적으로 업데이트되었습니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "잘못된 요청",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "유효하지 않은 요청입니다."
-                    },
-                    "statusCode": {
-                      "type": "integer",
-                      "example": 400
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "인증 실패",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "인증 토큰이 필요합니다."
-                    },
-                    "statusCode": {
-                      "type": "integer",
-                      "example": 401
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "서버 오류",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "서버 오류가 발생했습니다."
-                    },
-                    "statusCode": {
-                      "type": "integer",
-                      "example": 500
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "medications": {
-                    "type": "array",
-                    "description": "사용자가 등록할 약물 목록",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "medName": {
-                          "type": "string",
-                          "example": "타이레놀",
-                          "description": "약물 이름"
-                        },
-                        "description": {
-                          "type": "string",
-                          "example": "진통제",
-                          "description": "약물 설명",
-                          "nullable": true
-                        },
-                        "medicationDays": {
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "MON",
-                              "TUE",
-                              "WED",
-                              "THU",
-                              "FRI",
-                              "SAT",
-                              "SUN"
-                            ]
-                          },
-                          "example": [
-                            "MON",
-                            "WED",
-                            "FRI"
-                          ],
-                          "description": "복용 요일"
-                        },
-                        "medicationTimes": {
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
-                            "example": "08:30"
-                          },
-                          "example": [
-                            "08:30",
-                            "20:00"
-                          ],
-                          "description": "복용 시간 (HH:MM)"
-                        }
-                      }
-                    }
-                  }
-                },
-                "required": [
-                  "medications"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/settings/workout-level": {
       "patch": {
         "tags": [
@@ -2174,6 +1998,332 @@
         }
       }
     },
+    "/api/settings/medications/add": {
+      "post": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "복용 약물 추가",
+        "description": "사용자가 새로운 복용 약물을 추가합니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "약물 추가 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "약물이 성공적으로 추가되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "유효하지 않은 요청입니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "인증 토큰이 필요합니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "medications": {
+                    "type": "array",
+                    "description": "추가할 약물 목록",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "medName": {
+                          "type": "string",
+                          "example": "타이레놀",
+                          "description": "약물 이름"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "진통제",
+                          "description": "약물 설명",
+                          "nullable": true
+                        },
+                        "medicationDays": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "MON",
+                              "TUE",
+                              "WED",
+                              "THU",
+                              "FRI",
+                              "SAT",
+                              "SUN"
+                            ]
+                          },
+                          "example": [
+                            "MON",
+                            "WED",
+                            "FRI"
+                          ],
+                          "description": "복용 요일"
+                        },
+                        "medicationTimes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+                            "example": "08:30"
+                          },
+                          "example": [
+                            "08:30",
+                            "20:00"
+                          ],
+                          "description": "복용 시간 (HH:MM)"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "medications"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/medications/{medicationId}": {
+      "delete": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "복용 약물 삭제",
+        "description": "사용자가 복용 중인 약물을 삭제합니다.",
+        "parameters": [
+          {
+            "name": "medicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 3
+                }
+              }
+            },
+            "description": "삭제할 약물의 ID"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "약물 삭제 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "약물이 성공적으로 삭제되었습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "유효하지 않은 요청입니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "인증 토큰이 필요합니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "해당 약물이 존재하지 않음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "해당 약물을 찾을 수 없습니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/settings/{font-size{where{id:Number(medicationId)}}": {
+      "delete": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/workouts/categories/list/list": {
       "get": {
         "description": "",
@@ -2190,6 +2340,150 @@
         "responses": {
           "default": {
             "description": ""
+          }
+        }
+      }
+    },
+    "/api/shops/my-gifticons": {
+      "get": {
+        "tags": [
+          "Shops"
+        ],
+        "summary": "사용자의 기프티콘 목록 조회",
+        "description": "현재 로그인한 사용자가 구매한 기프티콘 목록을 조회합니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "사용자 기프티콘 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "gifticons": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "레쓰비"
+                          },
+                          "price": {
+                            "type": "number",
+                            "example": 800
+                          },
+                          "image": {
+                            "type": "string",
+                            "example": "image_url"
+                          },
+                          "store": {
+                            "type": "string",
+                            "example": "GS25"
+                          },
+                          "isUsed": {
+                            "type": "boolean",
+                            "example": false
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "기프티콘 조회 성공"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "사용자 인증 필요"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/shops/products": {
+      "get": {
+        "tags": [
+          "Shops"
+        ],
+        "summary": "구매 가능한 전체 기프티콘 목록 조회",
+        "description": "사용자가 구매할 수 있는 전체 기프티콘 목록을 조회합니다.",
+        "responses": {
+          "200": {
+            "description": "전체 기프티콘 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "레쓰비"
+                          },
+                          "price": {
+                            "type": "number",
+                            "example": 800
+                          },
+                          "image": {
+                            "type": "string",
+                            "example": "image_url"
+                          },
+                          "store": {
+                            "type": "string",
+                            "example": "GS25"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "전체 기프티콘 조회 성공"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류"
           }
         }
       }
