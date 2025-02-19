@@ -35,8 +35,8 @@
       "description": "설정 관련 API"
     },
     {
-      "name": "OpenAI",
-      "description": "챗지피티 응답 관련 API"
+      "name": "Shops",
+      "description": "상점 물품 관련 API"
     }
   ],
   "paths": {
@@ -2371,14 +2371,6 @@
                           "image": {
                             "type": "string",
                             "example": "image_url"
-                          },
-                          "store": {
-                            "type": "string",
-                            "example": "GS25"
-                          },
-                          "isUsed": {
-                            "type": "boolean",
-                            "example": false
                           }
                         }
                       }
@@ -2444,10 +2436,6 @@
                           "image": {
                             "type": "string",
                             "example": "image_url"
-                          },
-                          "store": {
-                            "type": "string",
-                            "example": "GS25"
                           }
                         }
                       }

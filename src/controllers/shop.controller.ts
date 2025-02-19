@@ -29,8 +29,6 @@ export const getUserGifticons = async (req: Request, res: Response) => {
                     name: { type: "string", example: "레쓰비" },
                     price: { type: "number", example: 800 },
                     image: { type: "string", example: "image_url" },
-                    store: { type: "string", example: "GS25" },
-                    isUsed: { type: "boolean", example: false }
                   }
                 }
               },
@@ -85,7 +83,6 @@ export const getAllGifticons = async (req: Request, res: Response) => {
                     name: { type: "string", example: "레쓰비" },
                     price: { type: "number", example: 800 },
                     image: { type: "string", example: "image_url" },
-                    store: { type: "string", example: "GS25" }
                   }
                 }
               },

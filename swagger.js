@@ -30,8 +30,8 @@ const options = {
       description: "설정 관련 API",
     },
     {
-      name: "OpenAI",
-      description: "챗지피티 응답 관련 API",
+      name: "Shops",
+      description: "상점 물품 관련 API",
     },
   ],
   servers: [
