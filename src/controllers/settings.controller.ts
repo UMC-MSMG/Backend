@@ -3,14 +3,10 @@
 import { RequestHandler } from "express";
 import { prisma } from "../db.config";
 import {
-  UpdateFontSizeRequest,
-  UpdateFontSizeResponse,
-  UpdateUserProfileRequest,
-  UpdateUserProfileResponse,
-  UpdateMedicationRequest,
-  UpdateMedicationResponse,
-  UpdateWorkoutLevelRequest,
-  UpdateWorkoutLevelResponse,
+  UpdateFontSizeRequest, UpdateFontSizeResponse,
+  UpdateUserProfileRequest, UpdateUserProfileResponse,
+  UpdateMedicationRequest, UpdateMedicationResponse,
+  UpdateWorkoutLevelRequest,UpdateWorkoutLevelResponse,
 } from "../types/settings.types";
 import { Day, WorkoutLevel } from "@prisma/client"; // Prisma Enum 가져옴
 
@@ -90,49 +86,6 @@ export const updateUserProfile: RequestHandler<{}, UpdateUserProfileResponse, Up
   }
 };
 
-/**
- * 복용 약물 정보 수정
- */
-export const updateMedications: RequestHandler<{},UpdateMedicationResponse,UpdateMedicationRequest> = async (req, res) => {
-  try {
-    const userId = req.user?.id;
-    const { medications } = req.body;
-
-    if (!userId || !medications) {
-      res.status(400).json({ error: "유효하지 않은 요청입니다.", statusCode: 400 });
-      return;
-    }
-
-    await prisma.medication.deleteMany({ where: { userId } });
-
-    await prisma.$transaction(
-      medications.map((med) =>
-        prisma.medication.create({
-          data: {
-            userId,
-            medName: med.medName,
-            description: med.description || "",
-            MedicationDay: {
-              create: med.medicationDays.map((day) => ({
-                day: day as Day, // Prisma Enum으로 변환
-              })),
-            },
-            MedicationTime: {
-              create: med.medicationTimes.map((time) => ({
-                time: new Date(`1970-01-01T${time}:00Z`),
-              })),
-            },
-          },
-        })
-      )
-    );
-
-    res.json({ message: "약물 정보가 성공적으로 업데이트되었습니다." });
-  } catch (error) {
-    console.error("약물 정보 수정 오류:", error);
-    res.status(500).json({ error: "서버 오류가 발생했습니다.", statusCode: 500 });
-  }
-};
 
 /**
  * 운동 난이도 수정
@@ -162,6 +115,83 @@ export const updateWorkoutLevel: RequestHandler<{},UpdateWorkoutLevelResponse,Up
     res.json({ message: "운동 난이도가 성공적으로 업데이트되었습니다." });
   } catch (error) {
     console.error("운동 난이도 수정 오류:", error);
+    res.status(500).json({ error: "서버 오류가 발생했습니다.", statusCode: 500 });
+  }
+};
+
+/**
+ * 복용 약물 추가
+ */
+export const addMedication: RequestHandler<{}, UpdateMedicationResponse, UpdateMedicationRequest> = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const { medications } = req.body;
+
+    if (!userId || !medications || medications.length === 0) {
+      res.status(400).json({ error: "유효하지 않은 요청입니다.", statusCode: 400 });
+      return;
+    }
+
+    await prisma.$transaction(
+      medications.map((med) =>
+        prisma.medication.create({
+          data: {
+            userId,
+            medName: med.medName,
+            description: med.description || "",
+            MedicationDay: {
+              create: med.medicationDays.map((day) => ({
+                day: day as Day,
+              })),
+            },
+            MedicationTime: {
+              create: med.medicationTimes.map((time) => ({
+                time: new Date(`1970-01-01T${time}:00Z`),
+              })),
+            },
+          },
+        })
+      )
+    );
+
+    res.json({ message: "약물이 성공적으로 추가되었습니다." });
+  } catch (error) {
+    console.error("약물 추가 오류:", error);
+    res.status(500).json({ error: "서버 오류가 발생했습니다.", statusCode: 500 });
+  }
+};
+
+/**
+ * 복용 약물 삭제
+ */
+export const deleteMedication: RequestHandler<{ medicationId: string }, UpdateMedicationResponse, {}> = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const { medicationId } = req.params;
+
+    if (!userId || !medicationId) {
+      res.status(400).json({ error: "유효하지 않은 요청입니다.", statusCode: 400 });
+      return;
+    }
+
+    // 해당 사용자의 특정 약물 찾기
+    const existingMedication = await prisma.medication.findFirst({
+      where: { id: Number(medicationId), userId },
+    });
+
+    if (!existingMedication) {
+      res.status(404).json({ error: "해당 약물을 찾을 수 없습니다.", statusCode: 404 });
+      return;
+    }
+
+    // 약물 삭제 (관련된 복용 일정과 시간도 삭제됨)
+    await prisma.medication.delete({
+      where: { id: Number(medicationId) },
+    });
+
+    res.json({ message: "약물이 성공적으로 삭제되었습니다." });
+  } catch (error) {
+    console.error("약물 삭제 오류:", error);
     res.status(500).json({ error: "서버 오류가 발생했습니다.", statusCode: 500 });
   }
 };

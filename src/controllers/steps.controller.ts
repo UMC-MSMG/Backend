@@ -69,7 +69,7 @@ export const getUserSteps: RequestHandler<
   }
 };
 
-// 날짜별 걸음수 추가 (업데이트/등록)
+// 날짜별 걸음수 업데이트(등록)
 export const addUserSteps: RequestHandler<
   {},
   AddUserStepsResponse,
@@ -102,7 +102,7 @@ export const addUserSteps: RequestHandler<
         userId_date: { userId: userId, date: parsedDate },
       },
       update: {
-        steps: { increment: steps },
+        steps: steps,
       },
       create: {
         userId: userId,
@@ -113,9 +113,8 @@ export const addUserSteps: RequestHandler<
 
     res.json({
       userId,
-      steps,
       totalSteps: userSteps.steps,
-      message: "걸음수가 성공적으로 추가되었습니다.",
+      message: "걸음수가 성공적으로 업데이트되었습니다.",
     });
   } catch (error) {
     console.error("걸음수 추가 실패:", error);

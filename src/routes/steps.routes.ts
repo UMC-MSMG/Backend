@@ -48,8 +48,8 @@ router.put(
     verifyToken,
     /*
     #swagger.tags = ['Steps']
-    #swagger.summary = '사용자 걸음수 추가'
-    #swagger.description = '특정 날짜의 사용자 걸음수를 추가(업데이트)합니다.'
+    #swagger.summary = '사용자 걸음수 저장'
+    #swagger.description = '특정 날짜의 사용자 걸음수를 저장합니다.'
     #swagger.security = [{ "bearerAuth": [] }]
     #swagger.requestBody = {
         required: true,
@@ -62,13 +62,13 @@ router.put(
                         steps: {
                             type: "integer",
                             example: 5000,
-                            description: "추가할 걸음수"
+                            description: "저장할 걸음수"
                         },
                         date: {
                             type: "string",
                             format: "date",
                             example: "2025-02-18",
-                            description: "걸음수를 추가할 날짜 (YYYY-MM-DD 형식)"
+                            description: "걸음수를 저장할 날짜 (YYYY-MM-DD 형식)"
                         }
                     }
                 }
@@ -76,16 +76,15 @@ router.put(
         }
     }
     #swagger.responses[200] = {
-        description: "걸음수 추가 성공",
+        description: "걸음수 저장 성공",
         content: {
             "application/json": {
                 schema: {
                     type: "object",
                     properties: {
                         userId: { type: "integer" },
-                        steps: { type: "integer" },
                         totalSteps: { type: "integer" },
-                        message: { type: "string", example: "걸음수가 성공적으로 추가되었습니다." }
+                        message: { type: "string", example: "걸음수가 성공적으로 업데이트되었습니다." }
                     }
                 }
             }
