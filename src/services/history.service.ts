@@ -74,4 +74,17 @@ export const historyService = {
       throw new Error("요약 정보 조회 실패");
     }
   },
+  getMainPageSummary: async (userId: number) => {
+    const startOfWeek = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      new Date().getDate() - new Date().getDay() + 1
+    );
+    try {
+      return await HistoryRepository.getMainPageSummary(userId, startOfWeek);
+    } catch (error) {
+      console.error("요약 정보 조회 중 오류 발생:", error);
+      throw new Error("요약 정보 조회 실패");
+    }
+  },
 };
