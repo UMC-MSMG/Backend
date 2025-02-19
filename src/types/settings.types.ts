@@ -61,6 +61,13 @@ export type UpdateMedicationResponse =
     }
   | ErrorResponse;
 
+export type DeleteMedicationResponse =
+  | {
+      message: string;
+    }
+  | ErrorResponse;
+
+//운동 난이도 관련 타입
 export type UpdateWorkoutLevelRequest = {
   workoutLevel: "LOW" | "MEDIUM" | "HIGH";
 };
@@ -70,3 +77,5 @@ export type UpdateWorkoutLevelResponse =
       message: string;
     }
   | ErrorResponse;
+
+  

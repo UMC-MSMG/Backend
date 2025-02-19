@@ -1,22 +1,22 @@
 //settings.routes.ts
 
 import { Router } from "express";
-import { updateFontSize, updateUserProfile, updateMedications, updateWorkoutLevel } from "../controllers/settings.controller";
+import { updateFontSize, updateUserProfile, updateWorkoutLevel, addMedication, deleteMedication } from "../controllers/settings.controller";
 import { verifyToken } from "../middleware/auth.middleware";
 
 const router = Router();
 
 /**
  * 글씨 크기 수정
- * PUT /api/settings/font-size
+ * PATCH /api/settings/font-size
  */
-router.put(
+router.patch(
   "/font-size",
   verifyToken, 
   /*
   #swagger.tags = ['Settings']
   #swagger.summary = '글씨 크기 수정'
-  #swagger.description = '사용자의 글씨 크기 설정을 수정합니다.'
+  #swagger.description = '사용자의 글씨 크기 설정을 수정합니다.(1: 기본, 2: 크게, 3: 아주 크게)'
   #swagger.security = [{ "bearerAuth": [] }] 
   #swagger.requestBody = {
     required: true,
@@ -180,112 +180,6 @@ router.put(
   updateUserProfile
 );
 
-/**
- * 복용 약물 정보 수정
- * PATCH /api/settings/medications
- */
-router.patch(
-  "/medications",
-  verifyToken,
-  /*
-  #swagger.tags = ['Settings']
-  #swagger.summary = '복용 약물 정보 수정'
-  #swagger.description = '사용자가 복용 중인 약물을 추가, 수정, 삭제할 수 있습니다.'
-  #swagger.security = [{ "bearerAuth": [] }] 
-  #swagger.requestBody = {
-    required: true,
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            medications: {
-              type: "array",
-              description: "사용자가 등록할 약물 목록",
-              items: {
-                type: "object",
-                properties: {
-                  medName: { type: "string", example: "타이레놀", description: "약물 이름" },
-                  description: { type: "string", example: "진통제", description: "약물 설명", nullable: true },
-                  medicationDays: { 
-                    type: "array",
-                    items: { type: "string", enum: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] },
-                    example: ["MON", "WED", "FRI"],
-                    description: "복용 요일"
-                  },
-                  medicationTimes: { 
-                    type: "array",
-                    items: { type: "string", pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$", example: "08:30" },
-                    example: ["08:30", "20:00"],
-                    description: "복용 시간 (HH:MM)"
-                  }
-                }
-              }
-            }
-          },
-          required: ["medications"]
-        }
-      }
-    }
-  }
-  #swagger.responses[200] = {
-    description: '약물 정보 수정 성공',
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            message: { type: "string", example: "약물 정보가 성공적으로 업데이트되었습니다." }
-          }
-        }
-      }
-    }
-  }
-  #swagger.responses[400] = {
-    description: '잘못된 요청',
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            error: { type: "string", example: "유효하지 않은 요청입니다." },
-            statusCode: { type: "integer", example: 400 }
-          }
-        }
-      }
-    }
-  }
-  #swagger.responses[401] = {
-    description: '인증 실패',
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            error: { type: "string", example: "인증 토큰이 필요합니다." },
-            statusCode: { type: "integer", example: 401 }
-          }
-        }
-      }
-    }
-  }
-  #swagger.responses[500] = {
-    description: '서버 오류',
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            error: { type: "string", example: "서버 오류가 발생했습니다." },
-            statusCode: { type: "integer", example: 500 }
-          }
-        }
-      }
-    }
-  }
-  */
-  updateMedications
-);
 
 /**
 * 운동 난이도 수정
@@ -375,6 +269,207 @@ router.patch(
   }
   */
   updateWorkoutLevel
+);
+
+/**
+ * 복용 약물 추가
+ * POST /api/settings/medications/add
+ */
+router.post(
+  "/medications/add",
+  verifyToken,
+  /*
+  #swagger.tags = ['Settings']
+  #swagger.summary = '복용 약물 추가'
+  #swagger.description = '사용자가 새로운 복용 약물을 추가합니다.'
+  #swagger.security = [{ "bearerAuth": [] }] 
+  #swagger.requestBody = {
+    required: true,
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            medications: {
+              type: "array",
+              description: "추가할 약물 목록",
+              items: {
+                type: "object",
+                properties: {
+                  medName: { type: "string", example: "타이레놀", description: "약물 이름" },
+                  description: { type: "string", example: "진통제", description: "약물 설명", nullable: true },
+                  medicationDays: { 
+                    type: "array",
+                    items: { type: "string", enum: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] },
+                    example: ["MON", "WED", "FRI"],
+                    description: "복용 요일"
+                  },
+                  medicationTimes: { 
+                    type: "array",
+                    items: { type: "string", pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$", example: "08:30" },
+                    example: ["08:30", "20:00"],
+                    description: "복용 시간 (HH:MM)"
+                  }
+                }
+              }
+            }
+          },
+          required: ["medications"]
+        }
+      }
+    }
+  }
+  #swagger.responses[200] = {
+    description: '약물 추가 성공',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            message: { type: "string", example: "약물이 성공적으로 추가되었습니다." }
+          }
+        }
+      }
+    }
+  }
+  #swagger.responses[400] = {
+    description: '잘못된 요청',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "유효하지 않은 요청입니다." },
+            statusCode: { type: "integer", example: 400 }
+          }
+        }
+      }
+    }
+  }
+  #swagger.responses[401] = {
+    description: '인증 실패',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "인증 토큰이 필요합니다." },
+            statusCode: { type: "integer", example: 401 }
+          }
+        }
+      }
+    }
+  }
+  #swagger.responses[500] = {
+    description: '서버 오류',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "서버 오류가 발생했습니다." },
+            statusCode: { type: "integer", example: 500 }
+          }
+        }
+      }
+    }
+  }
+  */
+  addMedication
+);
+
+/**
+ * 복용 약물 삭제
+ * DELETE /api/settings/medications/:medicationId
+ */
+router.delete(
+  "/medications/:medicationId",
+  verifyToken,
+  /*
+  #swagger.tags = ['Settings']
+  #swagger.summary = '복용 약물 삭제'
+  #swagger.description = '사용자가 복용 중인 약물을 삭제합니다.'
+  #swagger.security = [{ "bearerAuth": [] }] 
+  #swagger.parameters['medicationId'] = {
+    in: "path",
+    required: true,
+    description: "삭제할 약물의 ID",
+    schema: { 
+    type: "integer", 
+    example: 3 
+    }
+  }
+  #swagger.responses[200] = {
+    description: '약물 삭제 성공',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            message: { type: "string", example: "약물이 성공적으로 삭제되었습니다." }
+          }
+        }
+      }
+    }
+  }
+  #swagger.responses[400] = {
+    description: '잘못된 요청',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "유효하지 않은 요청입니다." },
+            statusCode: { type: "integer", example: 400 }
+          }
+        }
+      }
+    }
+  }
+  #swagger.responses[401] = {
+    description: '인증 실패',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "인증 토큰이 필요합니다." },
+            statusCode: { type: "integer", example: 401 }
+          }
+        }
+      }
+    }
+  }
+  #swagger.responses[404] = {
+    description: '해당 약물이 존재하지 않음',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "해당 약물을 찾을 수 없습니다." },
+            statusCode: { type: "integer", example: 404 }
+          }
+        }
+      }
+    }
+  }
+  #swagger.responses[500] = {
+    description: '서버 오류',
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "서버 오류가 발생했습니다." },
+            statusCode: { type: "integer", example: 500 }
+          }
+        }
+      }
+    }
+  }
+  */
+  deleteMedication
 );
 
 export default router;
