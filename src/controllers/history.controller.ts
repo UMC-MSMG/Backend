@@ -246,4 +246,111 @@ export const historyController = {
       res.status(500).json({ message: "서버 오류" });
     }
   },
+  getMainPageSummary: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    /*
+  #swagger.tags = ['History']
+  #swagger.summary = '메인페이지 요약 데이터 반환'
+  #swagger.description = '메인 페이지에 대한 요약 데이터를 반환합니다. (JWT 인증 필요)'
+  #swagger.security = [{ "bearerAuth": [] }]
+
+  #swagger.responses[200] = {
+      description: "요약 정보 조회 성공",
+      content: {
+          "application/json": {
+              schema: {
+                  type: "object",
+                  properties: {
+                      sequence_days: { 
+                          type: "integer", 
+                          example: 4, 
+                          description: "연속 운동 일수" 
+                      },
+                      weekly_workout: { 
+                          type: "object",
+                          description: "주간 운동 여부",
+                          properties: {
+                              monday: { type: "boolean", example: true, description: "월요일 운동 여부" },
+                              tuesday: { type: "boolean", example: true, description: "화요일 운동 여부" },
+                              wednesday: { type: "boolean", example: true, description: "수요일 운동 여부" },
+                              thursday: { type: "boolean", example: false, description: "목요일 운동 여부" },
+                              friday: { type: "boolean", example: false, description: "금요일 운동 여부" },
+                              saturday: { type: "boolean", example: false, description: "토요일 운동 여부" },
+                              sunday: { type: "boolean", example: false, description: "일요일 운동 여부" }
+                          }
+                      },
+                      workout_rate: { 
+                          type: "integer", 
+                          example: 50, 
+                          description: "운동 수행 비율 (%)" 
+                      },
+                      point: { 
+                          type: "integer", 
+                          example: 940000, 
+                          description: "사용자의 총 포인트" 
+                      },
+                     steps: { 
+                          type: "integer", 
+                          example: 3000, 
+                          description: "사용자의 총 걸음 수" 
+                      }
+                  }
+              }
+          }
+      }
+  }
+
+  #swagger.responses[401] = {
+      description: "인증 실패 (토큰 없음)",
+      content: {
+          "application/json": {
+              schema: {
+                  type: "object",
+                  properties: {
+                      message: { 
+                          type: "string", 
+                          example: "사용자 인증이 필요합니다." 
+                      }
+                  }
+              }
+          }
+      }
+  }
+
+  #swagger.responses[500] = {
+      description: "서버 오류",
+      content: {
+          "application/json": {
+              schema: {
+                  type: "object",
+                  properties: {
+                      message: { 
+                          type: "string", 
+                          example: "서버 오류" 
+                      }
+                  }
+              }
+          }
+      }
+  }
+*/
+
+    try {
+      if (!req.user) {
+        res.status(401).json({ message: "사용자 인증이 필요합니다." });
+        return;
+      }
+
+      const userId = req.user.id;
+      const summary = await historyService.getMainPageSummary(userId);
+
+      res.status(200).json(summary);
+    } catch (error) {
+      console.error("요약 정보 조회 중 오류:", error);
+      res.status(500).json({ message: "서버 오류" });
+    }
+  },
 };
