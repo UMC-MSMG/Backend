@@ -10,5 +10,6 @@ router.get(
   verifyToken,
   historyController.getCalendar
 );
+router.get("/main-page", verifyToken, historyController.getMainPageSummary);
 
 export default router;

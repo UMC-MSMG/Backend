@@ -48,48 +48,115 @@ export const HistoryRepository = {
     // 3. 연속 운동 일수
     const records = await prisma.workoutRecord.findMany({
       where: { userId: userId, isComplete: true },
-      select: { completeDate: true },
+      select: { completeDate: true, workoutId: true },
       orderBy: { completeDate: "desc" },
     });
     console.log(records);
-    const dateList: any = Array.from(
-      new Set(records.map((r) => r.completeDate?.toISOString().split("T")[0]))
-    )
-      .sort()
-      .reverse();
 
-    console.log(dateList);
+    function formatWorkoutRecords(
+      records: { completeDate: Date; workoutId: number }[]
+    ) {
+      return records.map((record) => ({
+        completeDate: new Date(record.completeDate).toISOString().split("T")[0], // "YYYY-MM-DD"로 변환
+        workoutId: record.workoutId,
+      }));
+    }
+
+    //@ts-ignore
+    const formattedRecords = formatWorkoutRecords(records);
+    console.log(formattedRecords);
 
     const today = new Date().toISOString().split("T")[0];
 
     let sequenceStart: Date | null;
     let count = 0;
+    let sequenceWorkout: {
+      workoutId: number;
+      count: number;
+      workoutName?: string;
+    }[] = [];
+
+    function updateSequenceWorkout(
+      sequenceWorkout: { workoutId: number; count: number }[],
+      newWorkoutId: number
+    ): { workoutId: number; count: number }[] {
+      const found = sequenceWorkout.some(
+        (data) => data.workoutId === newWorkoutId
+      );
+      console.log(found);
+
+      const updatedSequenceWorkout = found
+        ? sequenceWorkout.map((data) =>
+            data.workoutId === newWorkoutId
+              ? { ...data, count: data.count + 1 }
+              : data
+          )
+        : [...sequenceWorkout, { workoutId: newWorkoutId, count: 1 }];
+
+      console.log("함수 안", updatedSequenceWorkout);
+      return updatedSequenceWorkout; // ✅ 변경된 배열을 반환
+    }
 
     if (records.length == 0) {
       console.log(records.length);
       sequenceStart = null;
-    } else if (today != dateList[0]) {
-      console.log(new Date(dateList[0]), today, "오늘이 아님");
+    } else if (today != formattedRecords[0].completeDate) {
+      console.log(
+        new Date(formattedRecords[0].completeDate),
+        today,
+        "오늘이 아님"
+      );
       sequenceStart = null;
     } else {
-      let tempDate = new Date(dateList[0]);
+      let tempDate = new Date(formattedRecords[0].completeDate);
+      sequenceWorkout.push({
+        workoutId: formattedRecords[0].workoutId,
+        count: 1,
+      });
 
-      for (let i = 1; i < dateList.length; i++) {
+      for (let i = 1; i < formattedRecords.length; i++) {
         count++;
-        const currentDate = new Date(dateList[i]);
+        const currentDate = new Date(formattedRecords[i].completeDate);
         console.log("날짜", tempDate, currentDate);
         const diff =
           (tempDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24);
 
         if (diff == 1) {
+          sequenceWorkout = updateSequenceWorkout(
+            sequenceWorkout,
+            formattedRecords[i].workoutId
+          );
           tempDate = currentDate;
-          console.log(tempDate, count);
+          console.log(tempDate, count, sequenceWorkout);
         } else {
           break;
         }
       }
       console.log(tempDate, count);
       sequenceStart = tempDate;
+
+      //운동 리스트에 이름 추가하기
+      const workoutIds = sequenceWorkout.map((data) => data.workoutId);
+
+      // Prisma를 사용해 workout 테이블에서 해당 workoutId들의 workoutName 조회
+      const workouts = await prisma.workout.findMany({
+        where: {
+          id: { in: workoutIds },
+        },
+        select: {
+          id: true,
+          workoutName: true,
+        },
+      });
+      // 3️⃣ workoutId와 workoutName을 매핑
+      const workoutMap = new Map(workouts.map((w) => [w.id, w.workoutName]));
+
+      // 4️⃣ 기존 sequenceWorkout 배열에 workoutName 추가
+      sequenceWorkout = sequenceWorkout.map((data) => ({
+        ...data,
+        workoutName: workoutMap.get(data.workoutId) || "Unknown Workout", // 만약 조회되지 않으면 기본값 설정
+      }));
+      console.log("최종 운동 리스트", sequenceWorkout);
     }
 
     // 4️⃣ **이번 주 운동 여부**
@@ -136,6 +203,7 @@ export const HistoryRepository = {
       last_month_earnings: lastMonthEarningsSum,
       sequence_days: count,
       sequence_start: sequenceStart,
+      sequence_workouts: sequenceWorkout,
       sequence_end: new Date(),
       weekly_workout: weeklyExerciseStatus,
       workout_level: workoutLevel?.workoutLevel,
@@ -184,6 +252,113 @@ export const HistoryRepository = {
     return {
       workoutDaysNum,
       thisMonthEarningsSum,
+    };
+  },
+
+  //✨✨✨ 메인페이지 정보 가져오기
+  getMainPageSummary: async (userId: number, startOfWeek: Date) => {
+    // 1️⃣. 연속 운동 일수 가져오기
+    const records = await prisma.workoutRecord.findMany({
+      where: { userId: userId, isComplete: true },
+      select: { completeDate: true, workoutId: true },
+      orderBy: { completeDate: "desc" },
+    });
+    console.log(records);
+    const dateList: any = Array.from(
+      new Set(records.map((r) => r.completeDate?.toISOString().split("T")[0]))
+    )
+      .sort()
+      .reverse();
+    const workoutList: any = Array.from(
+      new Set(records.map((r) => r.workoutId))
+    );
+
+    console.log(dateList);
+    console.log("워크아웃 리스트", workoutList);
+
+    const today = new Date().toISOString().split("T")[0];
+
+    let count = 0;
+
+    if (records.length == 0) {
+      console.log(records.length);
+    } else if (today != dateList[0]) {
+      console.log(new Date(dateList[0]), today, "오늘이 아님");
+    } else {
+      let tempDate = new Date(dateList[0]);
+
+      for (let i = 1; i < dateList.length; i++) {
+        count++;
+        const currentDate = new Date(dateList[i]);
+        console.log("날짜", tempDate, currentDate);
+        const diff =
+          (tempDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24);
+
+        if (diff == 1) {
+          tempDate = currentDate;
+          console.log(tempDate, count);
+        } else {
+          break;
+        }
+      }
+      console.log(tempDate, count);
+    }
+    // 2️⃣ **이번 주 운동 여부**
+    const weeklyExercise = await prisma.workoutRecord.findMany({
+      where: {
+        userId,
+        completeDate: {
+          gte: startOfWeek,
+        },
+      },
+      orderBy: [{ completeDate: "asc" }],
+    });
+
+    // 주간 운동 여부 초기화 (null: 미래 날짜, false: 운동 안 함, true: 운동함)
+    const weeklyExerciseStatus: Record<string, boolean> = {
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+      saturday: false,
+      sunday: false,
+    };
+
+    // 운동한 날 업데이트
+    weeklyExercise.forEach((record) => {
+      if (record.completeDate) {
+        const day = record.completeDate
+          .toLocaleString("en-US", { weekday: "long" })
+          .toLowerCase();
+        weeklyExerciseStatus[day] = true;
+      }
+    });
+
+    // 3️⃣ 목표 달성률
+    const todayWorkout: number = await prisma.workoutRecord.count({
+      where: { userId: userId, completeDate: { gte: new Date(today) } },
+    });
+    console.log("오늘 목표 달성률", todayWorkout * 25);
+
+    // 4️⃣ 내 포인트
+    const point = await prisma.user.findFirst({
+      where: { id: userId },
+      select: { point: true },
+    });
+
+    const stepCount = await prisma.stepCount.findFirst({
+      where: { id: userId, date: { gte: new Date(today) } },
+      select: { steps: true },
+    });
+    console.log(stepCount);
+
+    return {
+      sequence_days: count,
+      weekly_workout: weeklyExerciseStatus,
+      workout_rate: todayWorkout * 25,
+      point: point?.point || 0,
+      steps: stepCount?.steps || 0,
     };
   },
 };

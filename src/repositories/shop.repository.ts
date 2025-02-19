@@ -23,8 +23,8 @@ export const ShopRepository = {
         name: purchase.Product.name,
         price: purchase.Product.price,
         image: purchase.Product.image,
-        store: "GS25", // 예시로 GS25, 실제로는 store 정보를 추가해야 함.
-        isUsed: false, // isUsed 필드가 없어서 기본값 false 처리
+        //store: "GS25", // 예시로 GS25, 실제로는 store 정보를 추가해야 함.
+        //isUsed: false, // isUsed 필드가 없어서 기본값 false 처리
       }))
     );
   },
@@ -46,7 +46,7 @@ export const ShopRepository = {
         name: product.name,
         price: product.price,
         image: product.image,
-        store: "GS25", // 예시로 GS25, 실제로는 store 정보를 추가해야 함.
+        //store: "GS25", // 예시로 GS25, 실제로는 store 정보를 추가해야 함.
       }))
     );
   },
