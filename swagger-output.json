@@ -1333,12 +1333,12 @@
                   "properties": {
                     "this_month_earnings": {
                       "type": "integer",
-                      "example": 200,
+                      "example": 550,
                       "description": "이번 달 획득한 포인트"
                     },
                     "last_month_earnings": {
                       "type": "integer",
-                      "example": 110,
+                      "example": 0,
                       "description": "지난 달 획득한 포인트"
                     },
                     "sequence_days": {
@@ -1347,57 +1347,77 @@
                       "description": "연속 운동 일수"
                     },
                     "sequence_start": {
-                      "type": "date",
-                      "example": "2025-02-05T00:00:00.000Z",
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-02-16T00:00:00.000Z",
                       "description": "연속 운동 시작일"
                     },
                     "sequence_end": {
-                      "type": "date",
-                      "example": "2025-02-08T11:02:46.103Z",
-                      "description": "연속 운동 끝"
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-02-19T06:50:57.228Z",
+                      "description": "연속 운동 종료일"
                     },
-                    "weekly_exercise": {
+                    "sequence_workouts": {
+                      "type": "array",
+                      "description": "연속 운동 기록 목록",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "workoutId": {
+                            "type": "integer",
+                            "example": 3,
+                            "description": "운동 ID"
+                          },
+                          "count": {
+                            "type": "integer",
+                            "example": 2,
+                            "description": "해당 운동 수행 횟수"
+                          },
+                          "workoutName": {
+                            "type": "string",
+                            "example": "무릎 굽혔다가 피기",
+                            "description": "운동 이름"
+                          }
+                        }
+                      }
+                    },
+                    "weekly_workout": {
                       "type": "object",
+                      "description": "주간 운동 여부",
                       "properties": {
                         "monday": {
                           "type": "boolean",
-                          "nullable": true,
-                          "example": false,
+                          "example": true,
                           "description": "월요일 운동 여부"
                         },
                         "tuesday": {
                           "type": "boolean",
-                          "nullable": true,
-                          "example": false,
+                          "example": true,
                           "description": "화요일 운동 여부"
                         },
                         "wednesday": {
                           "type": "boolean",
-                          "nullable": true,
                           "example": true,
                           "description": "수요일 운동 여부"
                         },
                         "thursday": {
                           "type": "boolean",
-                          "nullable": true,
-                          "example": true,
+                          "example": false,
                           "description": "목요일 운동 여부"
                         },
                         "friday": {
                           "type": "boolean",
-                          "nullable": true,
-                          "example": true,
+                          "example": false,
                           "description": "금요일 운동 여부"
                         },
                         "saturday": {
                           "type": "boolean",
-                          "nullable": true,
-                          "example": true,
+                          "example": false,
                           "description": "토요일 운동 여부"
                         },
                         "sunday": {
                           "type": "boolean",
-                          "nullable": true,
                           "example": false,
                           "description": "일요일 운동 여부"
                         }
@@ -1405,7 +1425,8 @@
                     },
                     "workout_level": {
                       "type": "string",
-                      "example": "NORMAL"
+                      "example": "NORMAL",
+                      "description": "사용자의 운동 레벨"
                     }
                   }
                 }
@@ -2146,209 +2167,6 @@
                 },
                 "required": [
                   "workoutLevel"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/gpt/generate-questions": {
-      "post": {
-        "tags": [
-          "OpenAI"
-        ],
-        "summary": "BMI 계산 및 운동 관련 질문 생성",
-        "description": "사용자의 키와 몸무게를 입력하면 BMI를 계산하고, 비만도를 평가하여 운동 관련 질문을 생성합니다.",
-        "responses": {
-          "200": {
-            "description": "BMI 및 운동 관련 질문 반환",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "bmi": {
-                      "type": "number",
-                      "example": 22.86,
-                      "description": "계산된 BMI 값"
-                    },
-                    "category": {
-                      "type": "string",
-                      "example": "정상",
-                      "description": "BMI에 따른 비만도 평가"
-                    },
-                    "questions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": [
-                        "하루 동안 얼마나 많이 걷나요?",
-                        "계단을 오르내릴 때 어려움이 있나요?"
-                      ],
-                      "description": "운동 관련 질문 리스트"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "잘못된 요청 (키 또는 몸무게 누락)"
-          },
-          "500": {
-            "description": "서버 오류"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "height": {
-                    "type": "number",
-                    "example": 175,
-                    "description": "사용자 키 (cm)"
-                  },
-                  "weight": {
-                    "type": "number",
-                    "example": 70,
-                    "description": "사용자 몸무게 (kg)"
-                  },
-                  "medications": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "혈압약"
-                    ],
-                    "description": "사용자가 복용 중인 약물 리스트"
-                  }
-                },
-                "required": [
-                  "height",
-                  "weight"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/gpt/determine-level": {
-      "post": {
-        "tags": [
-          "OpenAI"
-        ],
-        "summary": "사용자의 응답을 기반으로 운동 난이도 결정",
-        "description": "사용자가 응답한 운동 관련 질문의 답변을 기반으로 운동 난이도를 분석합니다.",
-        "responses": {
-          "200": {
-            "description": "운동 난이도 결정 결과 반환",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "fitnessLevel": {
-                      "type": "string",
-                      "example": "초급(하)",
-                      "description": "사용자의 운동 난이도 (초급(하) / 초급(상) / 중급 / 고급)"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "잘못된 요청 (응답 데이터 누락)"
-          },
-          "500": {
-            "description": "서버 오류"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "responses": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "하루 30분 미만",
-                      "어려움 있음",
-                      "넘어진 적 있음",
-                      "거의 안 함",
-                      "거의 안 함"
-                    ],
-                    "description": "사용자의 질문 응답 리스트"
-                  }
-                },
-                "required": [
-                  "responses"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/gpt/transcribe-audio": {
-      "post": {
-        "tags": [
-          "OpenAI"
-        ],
-        "summary": "사용자의 음성을 텍스트로 변환",
-        "description": "Whisper API를 사용하여 음성을 텍스트로 변환합니다.",
-        "responses": {
-          "200": {
-            "description": "음성 변환 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "text": {
-                      "type": "string",
-                      "example": "하루에 30분 정도 걷습니다.",
-                      "description": "변환된 텍스트"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "audio": {
-                    "type": "string",
-                    "format": "binary",
-                    "description": "업로드할 음성 파일"
-                  }
-                },
-                "required": [
-                  "audio"
                 ]
               }
             }
