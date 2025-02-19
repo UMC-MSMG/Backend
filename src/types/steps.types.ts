@@ -22,7 +22,6 @@ export interface AddUserStepsRequest {
 export type AddUserStepsResponse =
   | {
       userId: number;
-      steps: number;
       totalSteps: number;
       message: string;
     }
