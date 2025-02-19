@@ -84,6 +84,7 @@ export const historyController = {
       res.status(500).json({ message: "서버 오류" });
     }
   },
+
   getCalendar: async (req: Request, res: Response, next: NextFunction) => {
     /*
   #swagger.tags = ['History']
