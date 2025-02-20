@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - hotfix/fix-cicd-pipe
+      - test
   workflow_dispatch:
 
 jobs:
@@ -64,7 +64,7 @@ jobs:
       - name: Apply prisma migrations
         if: steps.paths-filter.outputs.prisma == 'true'
         run: |
-          ssh msmg-umc 'cd /opt/app; npm exec prisma migrate deploy'
+          ssh msmg-umc 'cd /opt/app; npm exec prisma migrate dev'
 
       - name: Start or Restart PM2 Process
         run: |
