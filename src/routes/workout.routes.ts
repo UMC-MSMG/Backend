@@ -7,9 +7,9 @@ const router = express.Router();
 
 router.patch("/complete", verifyToken, workoutController.completeWorkout);
 router.post(
-  "/records/generate-weekly",
+  "/records/generate",
   verifyToken,
-  WorkoutRecordController.createWeeklyWorkout
+  WorkoutRecordController.createThreeDayWorkout
 );
 
 export default router;

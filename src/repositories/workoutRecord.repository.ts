@@ -3,6 +3,13 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export class WorkoutRecordRepository {
+  async findUserWorkoutLevel(userId: number) {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: { workoutLevel: true },
+    });
+  }
+
   async findExistingRecords(userId: number, startDate: Date, endDate: Date) {
     return prisma.workoutRecord.findMany({
       where: {

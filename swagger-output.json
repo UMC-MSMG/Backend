@@ -2764,13 +2764,13 @@
         }
       }
     },
-    "/api/workouts/records/generate-weekly": {
+    "/api/workouts/records/generate": {
       "post": {
         "tags": [
           "Workout"
         ],
-        "summary": "[운동 스케줄 생성] 일주일치 운동 기록 생성",
-        "description": "오늘부터 7일 동안 하루 8개의 운동 기록을 생성합니다. 이미 존재하는 경우 생성하지 않습니다.",
+        "summary": "[운동 스케줄 생성] 3일치 운동 기록 생성",
+        "description": "오늘부터 3일 동안 하루에 해야하는 운동 기록을 생성합니다. 이미 존재하는 경우 생성하지 않습니다.",
         "parameters": [
           {
             "name": "authorization",
