@@ -56,7 +56,9 @@
     },
     "/api/users/signup-info": {
       "patch": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "회원가입 후 추가 정보 입력",
         "description": "회원가입 후 추가 정보를 입력합니다. (JWT 인증 필요)",
         "parameters": [
@@ -145,7 +147,10 @@
                   },
                   "gender": {
                     "type": "string",
-                    "enum": ["MALE", "FEMALE"],
+                    "enum": [
+                      "MALE",
+                      "FEMALE"
+                    ],
                     "example": "MALE",
                     "description": "성별"
                   },
@@ -172,8 +177,17 @@
                   },
                   "workout_level": {
                     "type": "string",
-                    "enum": ["HARD", "NORMAL", "EASY"],
+                    "enum": [
+                      "HARD",
+                      "NORMAL",
+                      "EASY"
+                    ],
                     "example": "NORMAL",
+                    "description": "운동 강도"
+                  },
+                  "ai_text": {
+                    "type": "string",
+                    "example": "ai 텍스트",
                     "description": "운동 강도"
                   }
                 }
@@ -185,7 +199,9 @@
     },
     "/api/users/user-info": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "사용자 정보 조회",
         "description": "현재 로그인한 사용자의 정보를 조회합니다.",
         "parameters": [
@@ -219,7 +235,10 @@
                     },
                     "gender": {
                       "type": "string",
-                      "enum": ["MALE", "FEMALE"],
+                      "enum": [
+                        "MALE",
+                        "FEMALE"
+                      ],
                       "example": "MALE"
                     },
                     "phoneNumber": {
@@ -254,12 +273,20 @@
                     },
                     "workoutLevel": {
                       "type": "string",
-                      "enum": ["LOW", "NORMAL", "HIGH"],
+                      "enum": [
+                        "LOW",
+                        "NORMAL",
+                        "HIGH"
+                      ],
                       "example": "NORMAL"
                     },
                     "fontSize": {
                       "type": "string",
-                      "enum": ["SMALL", "NORMAL", "LARGE"],
+                      "enum": [
+                        "SMALL",
+                        "NORMAL",
+                        "LARGE"
+                      ],
                       "example": "NORMAL"
                     },
                     "refreshToken": {
@@ -324,7 +351,9 @@
     },
     "/api/auth/login/phone/verify-request": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "[ 로그인 ] 전화번호 인증 코드 전송",
         "description": "로그인에 필요한 전화번호 인증 코드 전송 API. 근데 이 api 사용할때마다 20원씩 부과됩니다... 또 하루 최대 50회 제한 있어요.",
         "responses": {
@@ -421,7 +450,9 @@
                     "example": "01012345678"
                   }
                 },
-                "required": ["phoneNum"]
+                "required": [
+                  "phoneNum"
+                ]
               }
             }
           }
@@ -430,7 +461,9 @@
     },
     "/api/auth/login/phone/verify-check": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "[ 로그인 ] 휴대폰 인증번호 확인",
         "description": "사용자가 받은 인증번호를 확인하여 로그인 처리하는 API",
         "responses": {
@@ -555,7 +588,10 @@
                     "example": "902591"
                   }
                 },
-                "required": ["phoneNum", "code"]
+                "required": [
+                  "phoneNum",
+                  "code"
+                ]
               }
             }
           }
@@ -564,7 +600,9 @@
     },
     "/api/auth/signup/phone/verify-request": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "[ 회원가입 ] 전화번호 인증 코드 전송",
         "description": "로그인에 필요한 전화번호 인증 코드 전송 API. 근데 이 api 사용할때마다 20원씩 부과됩니다... 또 하루 최대 50회 제한 있어요.",
         "responses": {
@@ -661,7 +699,9 @@
                     "example": "01012345678"
                   }
                 },
-                "required": ["phoneNum"]
+                "required": [
+                  "phoneNum"
+                ]
               }
             }
           }
@@ -670,7 +710,9 @@
     },
     "/api/auth/signup/phone/verify-check": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "[ 회원가입 ] 휴대폰 인증번호 확인",
         "description": "사용자가 받은 인증번호를 확인하여 회원가입 처리하는 API",
         "responses": {
@@ -775,7 +817,10 @@
                     "example": "902591"
                   }
                 },
-                "required": ["phoneNum", "code"]
+                "required": [
+                  "phoneNum",
+                  "code"
+                ]
               }
             }
           }
@@ -818,7 +863,9 @@
     },
     "/api/auth/login/kakao": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "카카오 로그인 리다이렉트 API",
         "description": "카카오 로그인 페이지로 이동합니다",
         "responses": {
@@ -830,7 +877,9 @@
     },
     "/api/auth/kakao/callback": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "카카오 로그인 콜백 API",
         "description": "카카오 로그인 성공 시 JWT 반환",
         "responses": {
@@ -929,7 +978,9 @@
     },
     "/api/points/my-points": {
       "get": {
-        "tags": ["Points"],
+        "tags": [
+          "Points"
+        ],
         "summary": "사용자 포인트 조회",
         "description": "현재 로그인한 사용자의 포인트를 조회합니다.",
         "parameters": [
@@ -973,7 +1024,9 @@
     },
     "/api/points/add": {
       "patch": {
-        "tags": ["Points"],
+        "tags": [
+          "Points"
+        ],
         "summary": "사용자 포인트 추가",
         "description": "현재 로그인한 사용자에게 포인트를 추가합니다.",
         "parameters": [
@@ -1045,7 +1098,9 @@
     },
     "/api/points/buy-product": {
       "patch": {
-        "tags": ["Points"],
+        "tags": [
+          "Points"
+        ],
         "summary": "상품 구매",
         "description": "현재 로그인한 사용자가 포인트를 사용하여 상품을 구매합니다.",
         "parameters": [
@@ -1123,7 +1178,9 @@
     },
     "/api/steps/": {
       "get": {
-        "tags": ["Steps"],
+        "tags": [
+          "Steps"
+        ],
         "summary": "사용자 걸음수 조회",
         "description": "특정 날짜에 대한 사용자의 걸음수를 조회합니다.",
         "parameters": [
@@ -1187,7 +1244,9 @@
     },
     "/api/steps/add": {
       "put": {
-        "tags": ["Steps"],
+        "tags": [
+          "Steps"
+        ],
         "summary": "사용자 걸음수 저장",
         "description": "특정 날짜의 사용자 걸음수를 저장합니다.",
         "parameters": [
@@ -1243,7 +1302,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["steps", "date"],
+                "required": [
+                  "steps",
+                  "date"
+                ],
                 "properties": {
                   "steps": {
                     "type": "integer",
@@ -1265,7 +1327,9 @@
     },
     "/api/histories/summary": {
       "get": {
-        "tags": ["History"],
+        "tags": [
+          "History"
+        ],
         "summary": "운동일지 요약 데이터 반환",
         "description": "사용자의 운동일지에 대한 요약 데이터를 반환합니다. (JWT 인증 필요)",
         "parameters": [
@@ -1432,7 +1496,9 @@
     },
     "/api/histories/calendar/{year}/{month}": {
       "get": {
-        "tags": ["History"],
+        "tags": [
+          "History"
+        ],
         "summary": "운동일지 달력 데이터 반환",
         "description": "해당 달의 운동한 일수와 번 돈을 반환합니다. (JWT 인증 필요)",
         "parameters": [
@@ -1553,7 +1619,9 @@
     },
     "/api/histories/main-page": {
       "get": {
-        "tags": ["History"],
+        "tags": [
+          "History"
+        ],
         "summary": "메인페이지 요약 데이터 반환",
         "description": "메인 페이지에 대한 요약 데이터를 반환합니다. (JWT 인증 필요)",
         "parameters": [
@@ -1684,7 +1752,9 @@
     },
     "/api/settings/font-size": {
       "patch": {
-        "tags": ["Settings"],
+        "tags": [
+          "Settings"
+        ],
         "summary": "글씨 크기 수정",
         "description": "사용자의 글씨 크기 설정을 수정합니다.(1: 기본, 2: 크게, 3: 아주 크게)",
         "parameters": [
@@ -1794,7 +1864,9 @@
                     "description": "수정할 글씨 크기 (1: 기본, 2: 크게, 3: 아주 크게)"
                   }
                 },
-                "required": ["fontSize"]
+                "required": [
+                  "fontSize"
+                ]
               }
             }
           }
@@ -1803,7 +1875,9 @@
     },
     "/api/settings/profile": {
       "put": {
-        "tags": ["Settings"],
+        "tags": [
+          "Settings"
+        ],
         "summary": "사용자 정보 수정",
         "description": "사용자의 프로필 정보를 수정합니다.",
         "parameters": [
@@ -1920,7 +1994,10 @@
                   },
                   "gender": {
                     "type": "string",
-                    "enum": ["MALE", "FEMALE"],
+                    "enum": [
+                      "MALE",
+                      "FEMALE"
+                    ],
                     "description": "사용자 성별",
                     "nullable": true
                   },
@@ -1948,7 +2025,9 @@
     },
     "/api/settings/workout-level": {
       "patch": {
-        "tags": ["Settings"],
+        "tags": [
+          "Settings"
+        ],
         "summary": "운동 난이도 수정",
         "description": "사용자가 자신의 운동 난이도를 설정합니다. (상, 중, 하)",
         "parameters": [
@@ -2055,12 +2134,18 @@
                 "properties": {
                   "workoutLevel": {
                     "type": "string",
-                    "enum": ["LOW", "MEDIUM", "HIGH"],
+                    "enum": [
+                      "LOW",
+                      "MEDIUM",
+                      "HIGH"
+                    ],
                     "example": "MEDIUM",
                     "description": "운동 난이도 (LOW: 하, MEDIUM: 중, HIGH: 상)"
                   }
                 },
-                "required": ["workoutLevel"]
+                "required": [
+                  "workoutLevel"
+                ]
               }
             }
           }
@@ -2069,7 +2154,9 @@
     },
     "/api/settings/medications/add": {
       "post": {
-        "tags": ["Settings"],
+        "tags": [
+          "Settings"
+        ],
         "summary": "복용 약물 추가",
         "description": "사용자가 새로운 복용 약물을 추가합니다.",
         "parameters": [
@@ -2205,7 +2292,11 @@
                               "SUN"
                             ]
                           },
-                          "example": ["MON", "WED", "FRI"],
+                          "example": [
+                            "MON",
+                            "WED",
+                            "FRI"
+                          ],
                           "description": "복용 요일"
                         },
                         "medicationTimes": {
@@ -2215,14 +2306,19 @@
                             "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
                             "example": "08:30"
                           },
-                          "example": ["08:30", "20:00"],
+                          "example": [
+                            "08:30",
+                            "20:00"
+                          ],
                           "description": "복용 시간 (HH:MM)"
                         }
                       }
                     }
                   }
                 },
-                "required": ["medications"]
+                "required": [
+                  "medications"
+                ]
               }
             }
           }
@@ -2231,7 +2327,9 @@
     },
     "/api/settings/medications/{medicationId}": {
       "delete": {
-        "tags": ["Settings"],
+        "tags": [
+          "Settings"
+        ],
         "summary": "복용 약물 삭제",
         "description": "사용자가 복용 중인 약물을 삭제합니다.",
         "parameters": [
@@ -2402,7 +2500,9 @@
     },
     "/api/shops/my-gifticons": {
       "get": {
-        "tags": ["Shops"],
+        "tags": [
+          "Shops"
+        ],
         "summary": "사용자의 기프티콘 목록 조회",
         "description": "현재 로그인한 사용자가 구매한 기프티콘 목록을 조회합니다.",
         "parameters": [
@@ -2478,7 +2578,9 @@
     },
     "/api/shops/products": {
       "get": {
-        "tags": ["Shops"],
+        "tags": [
+          "Shops"
+        ],
         "summary": "구매 가능한 전체 기프티콘 목록 조회",
         "description": "사용자가 구매할 수 있는 전체 기프티콘 목록을 조회합니다.",
         "responses": {
@@ -2530,7 +2632,9 @@
     },
     "/api/workouts/complete": {
       "patch": {
-        "tags": ["Workout"],
+        "tags": [
+          "Workout"
+        ],
         "summary": "[운동 완료] 운동 기록 업데이트",
         "description": "사용자가 완료한 운동을 기록하고 포인트를 지급하는 API",
         "parameters": [
@@ -2644,10 +2748,16 @@
                     "items": {
                       "type": "integer"
                     },
-                    "example": [1, 2, 3]
+                    "example": [
+                      1,
+                      2,
+                      3
+                    ]
                   }
                 },
-                "required": ["workoutId"]
+                "required": [
+                  "workoutId"
+                ]
               }
             }
           }
