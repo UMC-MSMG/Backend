@@ -1,4 +1,3 @@
-import { get } from "http";
 import { HistoryRepository } from "../repositories/history.repository";
 
 export const historyService = {

@@ -35,8 +35,16 @@
       "description": "설정 관련 API"
     },
     {
+      "name": "OpenAI",
+      "description": "챗지피티 응답 관련 API"
+    },
+    {
+      "name": "Workout",
+      "description": "운동 관련 API"
+
       "name": "Shops",
       "description": "상점 물품 관련 API"
+
     }
   ],
   "paths": {
@@ -2617,6 +2625,140 @@
           },
           "500": {
             "description": "서버 오류"
+          }
+        }
+      }
+    },
+    "/api/workouts/complete": {
+      "patch": {
+        "tags": [
+          "Workout"
+        ],
+        "summary": "[운동 완료] 운동 기록 업데이트",
+        "description": "사용자가 완료한 운동을 기록하고 포인트를 지급하는 API",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "운동 완료 처리 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "pointsEarned": {
+                      "type": "integer",
+                      "example": 10
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (workoutId가 배열이 아닐 경우)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "workoutId는 배열이어야 합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "사용자 인증 필요",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "사용자 인증이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "서버 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workoutId": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "example": [
+                      1,
+                      2,
+                      3
+                    ]
+                  }
+                },
+                "required": [
+                  "workoutId"
+                ]
+              }
+            }
           }
         }
       }
