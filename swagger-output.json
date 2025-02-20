@@ -41,6 +41,10 @@
     {
       "name": "Workout",
       "description": "운동 관련 API"
+
+      "name": "Shops",
+      "description": "상점 물품 관련 API"
+
     }
   ],
   "paths": {
@@ -2541,14 +2545,6 @@
                           "image": {
                             "type": "string",
                             "example": "image_url"
-                          },
-                          "store": {
-                            "type": "string",
-                            "example": "GS25"
-                          },
-                          "isUsed": {
-                            "type": "boolean",
-                            "example": false
                           }
                         }
                       }
@@ -2614,10 +2610,6 @@
                           "image": {
                             "type": "string",
                             "example": "image_url"
-                          },
-                          "store": {
-                            "type": "string",
-                            "example": "GS25"
                           }
                         }
                       }

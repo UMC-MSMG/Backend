@@ -3,8 +3,8 @@ export interface Gifticon {
     name: string;
     price: number;
     image?: string;
-    store: string;
-    isUsed: boolean;
+    //store: string;
+    //isUsed: boolean;
   }
   
   export interface GetUserGifticonsResponse {
