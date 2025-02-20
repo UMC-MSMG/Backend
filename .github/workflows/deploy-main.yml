@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - hotfix/fix-cicd-pipe
+      - test
   workflow_dispatch:
 
 jobs:
