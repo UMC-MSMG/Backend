@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { WorkoutCategoryService } from "../services/workoutCategory.service";
 import { WorkoutCategoryDto } from "../dtos/workoutCategory.dto";
-import { WorkoutLevel } from '@prisma/client';
+//import { WorkoutLevel } from '@prisma/client';
 
 
 export class WorkoutCategoryController {
@@ -61,15 +61,16 @@ export class WorkoutCategoryController {
       if (!categoryId) {
         return res.status(400).json({ message: "categoryId를 입력하세요." });
       }
+
+      // ✅ 3. `workoutLevel`을 직접 STRING으로 가져오기
+      const workoutLevel: string = user.workoutLevel; // "LOW", "NORMAL", "HIGH"
+
+      // ✅ 4. `workoutLevel` 값 검증 (유효성 검사)
+      const validLevels = ["EASY", "NORMAL", "HARD"];
+      if (!validLevels.includes(workoutLevel)) {
+        return res.status(400).json({ message: "유효하지 않은 운동 레벨입니다." });
+      }
     
-    //workoutLevel을 사용자의 정보에서 가져오기
-    const workoutLevel = user.workoutLevel as WorkoutLevel;
-
-    // WorkoutLevel enum으로 변환 (필수)
-     if (!Object.values(WorkoutLevel).includes(workoutLevel)) {
-       return res.status(400).json({ message: "유효하지 않은 운동 레벨입니다." });
-     }  
-
     
      //DTO 생성 후 매핑핑 
      const dto = new WorkoutCategoryDto();
@@ -78,15 +79,16 @@ export class WorkoutCategoryController {
      dto.categoryId = Number(categoryId); //카테고리 ID 숫자로 변환
 
 
-     // 서비스 레이어 호출
+     // 서비스 레이어 호출하여 운동 목록 가져오기 
      const workouts = await WorkoutCategoryService.getWorkoutsByCategoryAndLevel(
       dto.workoutLevel,
       dto.categoryId
     );
 
 
+    
 
-      return res.status(200).json({ success:true, workouts });
+    return res.status(200).json({ success: true, workouts});
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "서버 오류 발생" });

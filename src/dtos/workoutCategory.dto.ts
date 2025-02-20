@@ -1,8 +1,4 @@
-import { WorkoutLevel } from '@prisma/client';
-
-
 export class WorkoutCategoryDto {
-    workoutLevel!: WorkoutLevel;
-    categoryId!: number;
-  }
-  
+  workoutLevel!: string; // ✅ ENUM 대신 STRING 사용
+  categoryId!: number;
+}
