@@ -23,15 +23,15 @@ import pointRoutes from "./routes/points.routes";
 import stepRoutes from "./routes/steps.routes";
 import historyRoutes from "./routes/history.routes";
 import settingsRoutes from "./routes/settings.routes";
-import workoutCategoryRoutes from  "./routes/workoutCategory.routes";
+import workoutCategoryRoutes from "./routes/workoutCategory.routes";
 import workoutDetailRoutes from "./routes/workoutDetail.routes";
 import shopRoutes from "./routes/shop.routes";
+import workoutRoutes from "./routes/workout.routes";
 
 dotenv.config();
 
 const app = express();
 const port = 3000;
-
 
 // Middleware
 app.use(express.json());
@@ -80,6 +80,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/workouts/categories/list", workoutCategoryRoutes); // WorkoutCategory 추가
 app.use("/api/workouts/details", workoutDetailRoutes); //workout 영상 링크보내주는 api
 app.use("/api/shops", shopRoutes);
+app.use("/api/workouts", workoutRoutes);
 
 // 서버 실행
 app.listen(port, () => {

@@ -33,6 +33,10 @@ const options = {
       name: "Shops",
       description: "상점 물품 관련 API",
     },
+    {
+      name: "Workout",
+      description: "운동 관련 API",
+    },
   ],
   servers: [
     {
