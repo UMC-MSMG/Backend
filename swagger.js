@@ -33,6 +33,10 @@ const options = {
       name: "OpenAI",
       description: "챗지피티 응답 관련 API",
     },
+    {
+      name: "Workout",
+      description: "운동 관련 API",
+    },
   ],
   servers: [
     {
