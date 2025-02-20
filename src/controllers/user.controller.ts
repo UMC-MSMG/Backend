@@ -25,6 +25,7 @@ export const userController = {
                       weight: { type: "number", example: 0, description: "몸무게 (kg)" },
                       agree_to_terms: { type: "boolean", example: true, description: "이용 약관 동의 여부" },
                       workout_level: { type: "string", enum: ["HARD", "NORMAL","EASY"], example: "NORMAL", description: "운동 강도" },
+                     ai_text: { type: "string", example: "ai 텍스트", description: "운동 강도" },
                   }
               }
           }

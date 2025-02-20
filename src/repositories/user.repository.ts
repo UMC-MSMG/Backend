@@ -24,6 +24,7 @@ export const UserRepository = {
         weight: userData.weight,
         consentPrivacyPolicy: userData.agree_to_terms,
         workoutLevel: userData.workout_level || "NORMAL",
+        aiText: userData.ai_text,
       },
     }),
 
