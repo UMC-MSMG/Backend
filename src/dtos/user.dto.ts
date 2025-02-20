@@ -14,4 +14,5 @@ export interface SignupInfoDto {
   weight: number;
   agree_to_terms: boolean;
   workout_level: "HARD" | "NORMAL" | "EASY";
+  ai_text: string;
 }

@@ -52,9 +52,9 @@ enum Day {
 }
 
 enum WorkoutLevel {
-  HIGH
+  HARD
   NORMAL
-  LOW
+  EASY
 }
 
 // Models
@@ -89,6 +89,7 @@ model User {
   deletedAt             DateTime? @map("deleted_at")
   fontSize              Int?     @map("font_size")
   refreshToken          String?  @map("refresh_token") @db.VarChar(255)
+  aiText                String? @db.Text @map("ai_text")
 
   Medication            Medication[]
   WorkoutRecord         WorkoutRecord[]
