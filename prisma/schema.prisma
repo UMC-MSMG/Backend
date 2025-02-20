@@ -7,7 +7,264 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enums
+model Session {
+  id        String   @id @default(uuid())
+  sid       String   @unique
+  data      String   @db.Text
+  expiresAt DateTime @map("expires_at")
+
+  @@map("session")
+}
+
+model User {
+  id                   Int               @id @unique @default(autoincrement())
+  name                 String            @db.VarChar(255)
+  kakaoId              String?           @map("kakao_id") @db.VarChar(255)
+  phoneNumber          String?           @map("phone_number") @db.VarChar(15)
+  birthDate            DateTime?         @map("birth_date")
+  height               Float?
+  weight               Float?
+  workoutFrequency     Int?              @map("workout_frequency")
+  consentPrivacyPolicy Boolean?          @default(false) @map("consent_privacy_policy")
+  consentTermsService  Boolean?          @default(false) @map("consent_terms_service")
+  consentDate          DateTime?         @default(now()) @map("consent_date")
+  deviceToken          String?           @map("device_token")
+  point                Int               @default(0)
+  image                String?           @db.Text
+  workoutLevel         String?           @map("workout_level") @db.VarChar(255)
+  createdAt            DateTime          @default(now()) @map("created_at")
+  updatedAt            DateTime          @updatedAt @map("updated_at")
+  deletedAt            DateTime?         @map("deleted_at")
+  fontSize             Int?              @map("font_size")
+  gender               Gender?
+  refreshToken         String?           @map("refresh_token") @db.VarChar(255)
+  MediaFile            MediaFile[]
+  Medication           Medication[]
+  MissionHistory       MissionHistory[]
+  Notification         Notification[]
+  Purchase             Purchase[]
+  StepCount            StepCount[]
+  UserPastWorkout      UserPastWorkout[]
+  WorkoutRecord        WorkoutRecord[]
+  past_workout         PastWorkout[]     @relation("pastworkouttouser")
+
+  @@map("user")
+}
+
+model Medication {
+  id             Int              @id @default(autoincrement())
+  userId         Int              @map("user_id")
+  medName        String?          @map("med_name") @db.VarChar(255)
+  description    String?          @db.Text
+  activeFlag     ActiveFlag?      @default(ACTIVE) @map("active_flag")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+  User           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  MedicationDay  MedicationDay[]
+  MedicationTime MedicationTime[]
+
+  @@index([userId], map: "medication_user_id_fkey")
+  @@map("medication")
+}
+
+model WorkoutRecord {
+  id            Int       @id @default(autoincrement())
+  scheduledDate DateTime  @map("scheduled_date")
+  completeDate  DateTime? @map("complete_date")
+  isComplete    Boolean   @map("is_complete")
+  userId        Int       @map("user_id")
+  workoutId     Int       @map("workout_id")
+  User          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Workout       Workout   @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "workout_record_user_id_fkey")
+  @@index([workoutId], map: "workout_record_workout_id_fkey")
+  @@map("workout_record")
+}
+
+model Notification {
+  id               Int              @id @default(autoincrement())
+  notificationType NotificationType @map("notification_type")
+  title            String           @db.Text
+  message          String           @db.Text
+  scheduledTime    DateTime?        @map("scheduled_time")
+  isSent           Boolean          @default(false) @map("is_sent")
+  isRead           Boolean          @default(false) @map("is_read")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  deletedAt        DateTime?        @map("deleted_at")
+  userId           Int              @map("user_id")
+  User             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "notification_user_id_fkey")
+  @@map("notification")
+}
+
+model StepCount {
+  id        Int      @id @default(autoincrement())
+  steps     Int      @default(0)
+  date      DateTime
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date], name: "userId_date")
+  @@map("step_count")
+}
+
+model WorkoutDetail {
+  id          Int     @id @default(autoincrement())
+  step        Int
+  description String  @db.Text
+  workoutId   Int     @map("workout_id")
+  link        String? @db.Text
+  Workout     Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@index([workoutId], map: "workout_detail_workout_id_fkey")
+  @@map("workout_detail")
+}
+
+model PastWorkout {
+  id          Int         @id @default(autoincrement())
+  workoutName WorkoutName @map("workout_name")
+  user        User[]      @relation("pastworkouttouser")
+
+  @@map("past_workout")
+}
+
+model Mission {
+  id               Int              @id @default(autoincrement())
+  title            String           @db.Text
+  description      String           @db.Text
+  point            Int
+  duration         Int
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  deletedAt        DateTime?        @map("deleted_at")
+  MissionHistories MissionHistory[]
+
+  @@map("mission")
+}
+
+model MedicationDay {
+  id           Int        @id @default(autoincrement())
+  day          Day
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  medicationId Int        @map("medication_id")
+  Medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  @@index([medicationId], map: "medication_day_medication_id_fkey")
+  @@map("medication_day")
+}
+
+model MedicationTime {
+  id           Int        @id @default(autoincrement())
+  time         DateTime
+  complete     Boolean    @default(false)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  medicationId Int        @map("medication_id")
+  Medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  @@index([medicationId], map: "medication_time_medication_id_fkey")
+  @@map("medication_time")
+}
+
+model WorkoutCategory {
+  id        Int       @id @default(autoincrement())
+  name      String?   @db.VarChar(255)
+  createdAt DateTime? @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  Workout   Workout[]
+
+  @@map("workout_category")
+}
+
+model MissionHistory {
+  id             Int           @id @default(autoincrement())
+  status         MissionStatus @default(PENDING) @map("status")
+  startDate      DateTime      @map("start_date")
+  expirationDate DateTime      @map("expiration_date")
+  completedDate  DateTime?     @map("completed_date")
+  userId         Int           @map("user_id")
+  missionId      Int           @map("mission_id")
+  Mission        Mission       @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  User           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([missionId], map: "mission_history_mission_id_fkey")
+  @@index([userId], map: "mission_history_user_id_fkey")
+  @@map("mission_history")
+}
+
+model MediaFile {
+  id        Int       @id @default(autoincrement())
+  fileName  String    @map("file_name") @db.VarChar(255)
+  filePath  String    @map("file_path") @db.VarChar(255)
+  fileType  FileType  @map("file_type")
+  createdAt DateTime? @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
+  userId    Int       @map("user_id")
+  User      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "media_file_user_id_fkey")
+  @@map("media_file")
+}
+
+model Workout {
+  id              Int               @id @default(autoincrement())
+  workoutName     String?           @map("workout_name") @db.VarChar(255)
+  description     String?           @db.Text
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  deletedAt       DateTime?         @map("deleted_at")
+  categoryId      Int               @map("category_id")
+  level           String            @db.VarChar(10)
+  UserPastWorkout UserPastWorkout[]
+  WorkoutCategory WorkoutCategory   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  WorkoutDetail   WorkoutDetail[]
+  WorkoutRecord   WorkoutRecord[]
+
+  @@index([categoryId], map: "workout_category_id_fkey")
+  @@map("workout")
+}
+
+model UserPastWorkout {
+  id        Int     @id @default(autoincrement())
+  userId    Int     @map("user_id")
+  workoutId Int     @map("workout_id")
+  User      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "user_past_workout_user_id_fkey")
+  @@index([workoutId], map: "user_past_workout_workout_id_fkey")
+  @@map("user_past_workout")
+}
+
+model Purchase {
+  id        Int     @id @default(autoincrement())
+  userId    Int     @map("user_id")
+  productId Int     @map("product_id")
+  Product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  User      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId], map: "purchase_product_id_fkey")
+  @@index([userId], map: "purchase_user_id_fkey")
+  @@map("purchase")
+}
+
+model Product {
+  id       Int        @id @default(autoincrement())
+  name     String     @db.Text
+  price    Int
+  image    String?    @db.Text
+  Purchase Purchase[]
+
+  @@map("product")
+}
+
 enum ActiveFlag {
   ACTIVE
   INACTIVE
@@ -49,269 +306,4 @@ enum Day {
   FRI
   SAT
   SUN
-}
-
-enum WorkoutLevel {
-  HIGH
-  NORMAL
-  LOW
-}
-
-// Models
-model Session {
-  id        String  @id @default(uuid())
-  sid       String   @unique
-  data      String   @db.Text
-  expiresAt DateTime @map("expires_at")
-
-  @@map("session")
-}
-
-model User {
-  id                    Int  @id @default(autoincrement()) @unique
-  name                  String?  @db.VarChar(255)
-  kakaoId               String?  @map("kakao_id") @db.VarChar(255)
-  gender                Gender?  
-  phoneNumber           String?  @map("phone_number") @db.VarChar(11) @unique
-  birthDate             DateTime? @map("birth_date")
-  height                Float?
-  weight                Float?
-  workoutFrequency      Int?     @map("workout_frequency")
-  consentPrivacyPolicy  Boolean? @map("consent_privacy_policy") @default(false)
-  consentTermsService   Boolean? @map("consent_terms_service") @default(false)
-  consentDate           DateTime? @map("consent_date") @default(now())
-  deviceToken           String? @map("device_token")
-  point                 Int     @default(0)
-  image                 String? @db.Text
-  workoutLevel          WorkoutLevel?    @map("workout_level")
-  createdAt             DateTime @map("created_at") @default(now())
-  updatedAt             DateTime? @map("updated_at") @updatedAt
-  deletedAt             DateTime? @map("deleted_at")
-  fontSize              Int?     @map("font_size")
-  refreshToken          String?  @map("refresh_token") @db.VarChar(255)
-
-  Medication            Medication[]
-  WorkoutRecord         WorkoutRecord[]
-  Notification          Notification[]
-  StepCount             StepCount[]
-  PastWorkout           PastWorkout[]
-  MissionHistory        MissionHistory[]
-  MediaFile             MediaFile[]
-  Purchase              Purchase[]
-  UserPastWorkout       UserPastWorkout[]
-  @@map("user")
-}
-
-model Medication {
-  id              Int  @id @default(autoincrement())
-  userId          Int  @map("user_id")
-  medName         String?  @map("med_name") @db.VarChar(255)
-  description     String? @db.Text
-  activeFlag      ActiveFlag?  @map("active_flag") @default(ACTIVE)
-  createdAt       DateTime @map("created_at") @default(now())
-  updatedAt       DateTime? @map("updated_at") @updatedAt
-  deletedAt       DateTime? @map("deleted_at")
-
-  User            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  MedicationTime  MedicationTime[]
-  MedicationDay  MedicationDay[]
-  @@map("medication")
-}
-
-model WorkoutRecord {
-  id             Int  @id @default(autoincrement())
-  scheduledDate  DateTime @map("scheduled_date")
-  completeDate   DateTime? @map("complete_date")
-  isComplete     Boolean  @map("is_complete")
-  userId         Int   @map("user_id")
-  workoutId      Int   @map("workout_id")
-  createdAt       DateTime @map("created_at") @default(now())
-  updatedAt       DateTime? @map("updated_at") @updatedAt
-  deletedAt       DateTime? @map("deleted_at")
-  
-  User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Workout        Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-
-  @@map("workout_record")
-}
-
-model Notification {
-  id              Int  @id @default(autoincrement())
-  notificationType NotificationType  @map("notification_type")
-  title           String  @db.Text
-  message         String  @db.Text
-  scheduledTime   DateTime? @map("scheduled_time")
-  isSent          Boolean  @map("is_sent") @default(false)
-  isRead          Boolean  @map("is_read") @default(false)
-  createdAt       DateTime @map("created_at") @default(now())
-  updatedAt       DateTime? @map("updated_at") @updatedAt
-  deletedAt       DateTime? @map("deleted_at")
-  userId          Int   @map("user_id")
-
-  User            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@map("notification")
-}
-
-model StepCount {
-  id             Int  @id @default(autoincrement())
-  steps          Int     @default(0)
-  date           DateTime
-  userId         Int  @map("user_id")
-  createdAt      DateTime @map("created_at") @default(now())
-  updatedAt      DateTime? @map("updated_at") @updatedAt
-
-  User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, date], name: "userId_date")
-  @@map("step_count")
-}
-
-model WorkoutDetail {
-  id          Int  @id @default(autoincrement())
-  step        Int
-  description String  @db.Text
-  workoutId   Int  @map("workout_id")
-  link        String? @db.Text
-
-  Workout     Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-
-  @@map("workout_detail")
-}
-
-model PastWorkout {
-  id          Int  @id @default(autoincrement())
-  workoutName WorkoutName  @map("workout_name")
-
-  User        User[]
-
-  @@map("past_workout")
-}
-
-model Mission {
-  id          Int  @id @default(autoincrement())
-  title       String  @db.Text
-  description String  @db.Text
-  point       Int
-  duration    Int
-  createdAt   DateTime @map("created_at") @default(now())
-  updatedAt   DateTime? @map("updated_at") @updatedAt
-  deletedAt   DateTime? @map("deleted_at")
-  MissionHistories MissionHistory[]
-
-  @@map("mission")
-}
-
-model MedicationDay {
-  id          Int  @id @default(autoincrement())
-  day         Day
-  createdAt   DateTime @map("created_at") @default(now())
-  updatedAt   DateTime? @map("updated_at") @updatedAt
-  medicationId Int  @map("medication_id")
-
-  Medication  Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
-
-  @@map("medication_day")
-}
-
-model MedicationTime {
-  id          Int  @id @default(autoincrement())
-  time        DateTime
-  complete    Boolean  @default(false)
-  createdAt   DateTime @map("created_at") @default(now())
-  updatedAt   DateTime? @map("updated_at") @updatedAt
-  medicationId Int  @map("medication_id")
-
-  Medication  Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
-
-  @@map("medication_time")
-}
-
-model WorkoutCategory {
-  id          Int  @id @default(autoincrement())
-  name        String? @db.VarChar(255)
-  createdAt   DateTime? @map("created_at")
-  updatedAt   DateTime? @map("updated_at")
-
-  Workout     Workout[]
-
-  @@map("workout_category")
-}
-
-model MissionHistory {
-  id          Int  @id @default(autoincrement())
-  status      MissionStatus  @map("status") @default(PENDING)
-  startDate   DateTime @map("start_date")
-  expirationDate     DateTime @map("expiration_date")
-  completedDate      DateTime? @map("completed_date")
-  userId      Int  @map("user_id")
-  missionId   Int  @map("mission_id")
-
-  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Mission     Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
-
-  @@map("mission_history")
-}
-
-model MediaFile {
-  id          Int  @id @default(autoincrement())
-  fileName    String  @map("file_name") @db.VarChar(255)
-  filePath    String  @map("file_path") @db.VarChar(255)
-  fileType    FileType @map("file_type")
-  createdAt   DateTime? @map("created_at")
-  deletedAt   DateTime? @map("deleted_at")
-  userId      Int  @map("user_id")
-
-  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("media_file")
-}
-
-model Workout {
-  id          Int  @id @default(autoincrement())
-  workoutName String? @map("workout_name") @db.VarChar(255)
-  description String? @db.Text
-  createdAt   DateTime @map("created_at") @default(now())
-  updatedAt   DateTime? @map("updated_at") @updatedAt 
-  deletedAt   DateTime? @map("deleted_at")
-  categoryId  Int  @map("category_id")
-
-  WorkoutCategory WorkoutCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  WorkoutDetail   WorkoutDetail[]
-  WorkoutRecord   WorkoutRecord[]
-  UserPastWorkout UserPastWorkout[]
-
-  @@map("workout")
-}
-
-model UserPastWorkout {
-  id             Int  @id @default(autoincrement())
-  userId         Int  @map("user_id")
-  workoutId      Int  @map("workout_id")
-
-  User           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Workout        Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-
-  @@map("user_past_workout")
-}
-
-model Purchase {
-  id          Int  @id @default(autoincrement())
-  userId      Int  @map("user_id")
-  productId   Int  @map("product_id")
-
-  User        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@map("purchase")
-}
-
-model Product {
-  id          Int  @id @default(autoincrement())
-  name        String  @db.Text
-  price       Int
-  image       String? @db.Text
-
-  Purchase     Purchase[]
-
-  @@map("product")
 }
