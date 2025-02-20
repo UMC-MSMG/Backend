@@ -26,7 +26,7 @@ import settingsRoutes from "./routes/settings.routes";
 import workoutCategoryRoutes from  "./routes/workoutCategory.routes";
 import workoutDetailRoutes from "./routes/workoutDetail.routes";
 import shopRoutes from "./routes/shop.routes";
-import uploadRoutes from "./routes/upload.routes";
+
 dotenv.config();
 
 const app = express();
@@ -80,7 +80,6 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/workouts/categories/list", workoutCategoryRoutes); // WorkoutCategory 추가
 app.use("/api/workouts/details", workoutDetailRoutes); //workout 영상 링크보내주는 api
 app.use("/api/shops", shopRoutes);
-app.use("/api/settings", uploadRoutes);
 
 // 서버 실행
 app.listen(port, () => {
