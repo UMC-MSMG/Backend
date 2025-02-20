@@ -2763,6 +2763,114 @@
           }
         }
       }
+    },
+    "/api/workouts/records/generate-weekly": {
+      "post": {
+        "tags": [
+          "Workout"
+        ],
+        "summary": "[운동 스케줄 생성] 일주일치 운동 기록 생성",
+        "description": "오늘부터 7일 동안 하루 8개의 운동 기록을 생성합니다. 이미 존재하는 경우 생성하지 않습니다.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "운동 스케줄이 업데이트되었습니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Workout schedule updated"
+                    },
+                    "created": {
+                      "type": "integer",
+                      "example": 56
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청 (토큰 문제)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "사용자 인증 필요",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
