@@ -162,6 +162,7 @@ export const PointsController = {
 
       const userId = req.user.id;
       const { productId } = req.body;
+      console.log(userId);
 
       if (!productId) {
         res.status(400).json({ message: "상품 ID가 필요합니다." });

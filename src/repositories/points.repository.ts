@@ -23,7 +23,7 @@ export const PointsRepository = {
       where: { id: productId },
       select: { price: true },
     });
-    console.log(getPrice?.price);
+    console.log("가격", productId, getPrice?.price);
     const productPrice = getPrice?.price;
     await prisma.$transaction([
       prisma.purchase.create({
