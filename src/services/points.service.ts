@@ -30,16 +30,19 @@ export const PointsService = {
   //구매
   buyProduct: async (userId: number, productId: number) => {
     try {
-      const userPoint = await PointsRepository.getUserPoint(userId);
+      console.log(userId);
+      const userPoint: number = await PointsRepository.getUserPoint(userId);
+      console.log(userPoint);
       const productPrice: number =
         await PointsRepository.getProductPrice(productId);
+      console.log(productPrice);
       if (userPoint < productPrice) {
         throw {
           statusCode: 403,
         };
       }
 
-      await PointsRepository.buyProduct(productId, userId);
+      await PointsRepository.buyProduct(userId, productId);
       const usedPoints = await PointsRepository.getUserPoint(userId);
       if (userPoint - productPrice !== usedPoints) {
         throw { statusCode: 403, message: "포인트 차감 오류" };
